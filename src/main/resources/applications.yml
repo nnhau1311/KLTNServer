@@ -1,0 +1,12 @@
+server:
+  port: 9090
+
+spring:
+  jpa:
+    database: POSTGRESQL
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    password: doubleh2022
+    url: jdbc:postgresql://103.70.30.134:80/double-h
+    username: admin
