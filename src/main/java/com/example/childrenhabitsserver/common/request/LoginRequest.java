@@ -1,4 +1,4 @@
-package com.example.childrenhabitsserver.auth;
+package com.example.childrenhabitsserver.common.request;
 
 import lombok.Data;
 

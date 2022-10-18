@@ -1,8 +1,8 @@
 package com.example.childrenhabitsserver.controller;
 
 import com.example.childrenhabitsserver.auth.JwtTokenProvider;
-import com.example.childrenhabitsserver.auth.LoginRequest;
-import com.example.childrenhabitsserver.auth.LoginResponse;
+import com.example.childrenhabitsserver.common.request.LoginRequest;
+import com.example.childrenhabitsserver.common.response.LoginResponse;
 import com.example.childrenhabitsserver.entity.CustomUserDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

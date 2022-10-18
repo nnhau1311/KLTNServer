@@ -14,6 +14,7 @@ import java.util.Collection;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class UserCustomStorge {
 
     @Id
@@ -24,8 +25,10 @@ public class UserCustomStorge {
 
     private String sessionId;
     @Column(name = "userNameCustom",nullable = false, unique = true)
-    private String username;
+    private String username; // tên đăng nhập
     @Column(name = "userPasswordCustom")
     private String password;
     private String role;
+    private String email;
+    private String userFullName; // tên người dùng
 }

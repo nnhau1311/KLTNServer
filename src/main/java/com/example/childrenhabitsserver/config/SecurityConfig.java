@@ -1,4 +1,4 @@
-package com.example.childrenhabitsserver.sercurity;
+package com.example.childrenhabitsserver.config;
 
 import com.example.childrenhabitsserver.auth.JwtAuthenticationFilter;
 import com.example.childrenhabitsserver.service.UserService;
@@ -61,10 +61,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
+                .antMatchers("/user/create").permitAll()
+                .and()
+                .authorizeRequests()
                 .antMatchers("/auth/login").permitAll()
-//                .anyRequest().authenticated()
-                .anyRequest().authenticated();
-//                .and().logout().logoutUrl("/auth/logout").permitAll();
+                .anyRequest().authenticated()
+//                .anyRequest().authenticated();
+                .and().logout().logoutUrl("/auth/logout").permitAll();
 
 
 //        http.logout(logout ->logout.logoutUrl("/auth/logout")

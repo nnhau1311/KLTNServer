@@ -1,12 +1,30 @@
-server:
-  port: 9090
+#server:
+#  port: 9090
 
 spring:
-  jpa:
-    database: POSTGRESQL
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    password: doubleh2022
-    url: jdbc:postgresql://103.70.30.134:80/double-h
-    username: admin
+#  jpa:
+#    database: POSTGRESQL
+#    database-platform: org.hibernate.dialect.PostgreSQLDialect
+#  datasource:
+#    driverClassName: org.postgresql.Driver
+#    url: jdbc:postgresql://localhost:5432/ChildrenHabits
+#    username: admin
+#    password: doubleh2022
+  mail:
+    #    host: mail.baohiembaolong.vn
+    #    username: test@baohiembaolong.vn
+    #    password: Baolong#13
+    #    host: smtp.gmail.com
+    #    username: alpaca.sender@gmail.com
+    #    password: dmvmjhoyekkucoog
+#    host: smtp.gmail.com
+#    username: chikienlu1@gmail.com
+#    password: rzlywxoxjsjigqjp
+#
+#    port: 587
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          starttls:
+#            enable: true

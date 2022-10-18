@@ -1,6 +1,7 @@
 package com.example.childrenhabitsserver.auth;
 
-import com.example.childrenhabitsserver.auth.JwtTokenProvider;
+import com.example.childrenhabitsserver.common.constant.ErrorCodeService;
+import com.example.childrenhabitsserver.service.ServiceException;
 import com.example.childrenhabitsserver.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             // Lấy jwt từ request
             String jwt = getJwtFromRequest(request);
-
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                 log.info("jwt is "+jwt);
                 // Lấy id user từ chuỗi jwt
@@ -49,6 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             } else {
                 log.error("jwt is null");
+                throw new ServiceException(ErrorCodeService.UN_AUTH);
             }
         } catch (Exception ex) {
             log.error("failed on set user authentication", ex);
