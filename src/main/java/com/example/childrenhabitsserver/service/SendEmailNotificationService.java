@@ -37,10 +37,8 @@ public class SendEmailNotificationService extends BaseObjectLoggable {
     private final ApplicationContext context;
     //    @Value("${libra.assets.api:http://assets-service}")
     private String assetsUrl;
-    //    @Value("${libra.mail.from-name:Tổng Công ty CP Bảo hiểm Bảo Long}")
-    private String fromName = "Test Mail";
-    //    @Value("${spring.mail.username}")
-    private String fromMail = "chikienlu1@gmail.com";
+    private String fromName = "ChildrenHabits";
+    private String fromMail = "thaianhhao322@gmail.com";
 
     public SendEmailNotificationService(JavaMailSender javaMailSender,
                                         Configuration freemakerConfig,
@@ -78,7 +76,7 @@ public class SendEmailNotificationService extends BaseObjectLoggable {
             if (model.getCc() != null) {
                 helper.setCc(cc);
             }
-            helper.setSubject(String.format("%s - %s", model.getSubject(), "Ứng dụng ChildrenHabits"));
+            helper.setSubject(String.format("%s - %s", model.getSubject(), ""));
             helper.setFrom(fromMail, fromName);
             Multipart multipart = new MimeMultipart();
 //            if (model.getAttachments() != null) {
