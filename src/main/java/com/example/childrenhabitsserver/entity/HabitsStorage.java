@@ -28,5 +28,7 @@ public class HabitsStorage {
     @Type(type = JPACustomType.JSONB)
     @Column(columnDefinition = JPACustomType.JSONB_DEF)
     private List<HabitsContent> habitsContentList;
+    private String content;
+
 }
 
