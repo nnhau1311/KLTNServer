@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<UserCustomStorge, String> {
     UserCustomStorge findByUsername(String username);
+    UserCustomStorge findByUsernameOrEmail(String username, String email);
 }

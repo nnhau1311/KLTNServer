@@ -1,4 +1,4 @@
-package com.example.childrenhabitsserver.common.request;
+package com.example.childrenhabitsserver.common.request.user;
 
 import lombok.*;
 

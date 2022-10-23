@@ -5,6 +5,7 @@ import com.example.childrenhabitsserver.base.response.WrapResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -84,19 +85,19 @@ public class GlobalWebExceptionHandle extends BaseObjectLoggable {
 //                .body(baseResponse);
 //    }
 //
-//    @ExceptionHandler(UnAuthenticationException.class)
-//    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
-//    public ResponseEntity<Object> handleAccessDeniedException(UnAuthenticationException ex) {
-//        WrapResponse baseResponse = new WrapResponse();
-//        baseResponse.setSuccess(false);
-//        baseResponse.setStatusCode("403");
-//        baseResponse.setErrorCode(SharedErrorCode.Forbidden);
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<Object> handleAccessDeniedException(BadCredentialsException ex) {
+        WrapResponse baseResponse = new WrapResponse();
+        baseResponse.setSuccess(false);
+        baseResponse.setStatusCode("410");
+        baseResponse.setErrorCode("Thông tin đăng nhập không hợp lệ");
 //        List<String> errorMsg = new ArrayList<>();
 //        errorMsg.add(MessageSourceUtils.getMessagePermissions(ex.getMessage()));
-//        baseResponse.setMessage(errorMsg);
-//        return ResponseEntity.status(HttpStatus.FORBIDDEN.value())
-//                .body(baseResponse);
-//    }
+        baseResponse.setMessage(Arrays.asList(ex.getMessage()));
+        return ResponseEntity.status(HttpStatus.FORBIDDEN.value())
+                .body(baseResponse);
+    }
 
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)

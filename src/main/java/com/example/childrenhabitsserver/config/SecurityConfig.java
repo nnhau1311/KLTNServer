@@ -61,7 +61,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/user/create").permitAll()
+                .antMatchers("/user/request-reset-password").anonymous()
+                .and()
+                .antMatcher("user/confirm-reset-password/*").anonymous()
                 .and()
                 .authorizeRequests()
                 .antMatchers("/auth/login").permitAll()
@@ -79,5 +81,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                    }
 //                }));
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
     }
 }

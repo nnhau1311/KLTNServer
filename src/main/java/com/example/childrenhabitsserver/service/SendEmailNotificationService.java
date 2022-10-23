@@ -37,10 +37,8 @@ public class SendEmailNotificationService extends BaseObjectLoggable {
     private final ApplicationContext context;
     //    @Value("${libra.assets.api:http://assets-service}")
     private String assetsUrl;
-    //    @Value("${libra.mail.from-name:Tổng Công ty CP Bảo hiểm Bảo Long}")
-    private String fromName = "Test Mail";
-    //    @Value("${spring.mail.username}")
-    private String fromMail = "chikienlu1@gmail.com";
+    private String fromName = "ChildrenHabits";
+    private String fromMail = "thaianhhao322@gmail.com";
 
     public SendEmailNotificationService(JavaMailSender javaMailSender,
                                         Configuration freemakerConfig,
@@ -54,7 +52,7 @@ public class SendEmailNotificationService extends BaseObjectLoggable {
 
     public void sendEmail(NotificationModel model) {
         String[] cc = model.getCc() == null ? new String[]{""} : model.getCc();
-        logger.debug(">>>>>>>>>>>>>>>>>>start sendmail to: " + model.getTo());
+        logger.info(">>>>>>>>>>>>>>>>>>start sendmail to: " + model.getTo());
         try {
             String htmlContent;
             if (model.getExternalTemplate() != null && model.getExternalTemplate()) {
@@ -78,7 +76,7 @@ public class SendEmailNotificationService extends BaseObjectLoggable {
             if (model.getCc() != null) {
                 helper.setCc(cc);
             }
-            helper.setSubject(String.format("%s - %s", model.getSubject(), "Ứng dụng ChildrenHabits"));
+            helper.setSubject(String.format("%s - %s", model.getSubject(), ""));
             helper.setFrom(fromMail, fromName);
             Multipart multipart = new MimeMultipart();
 //            if (model.getAttachments() != null) {
@@ -96,9 +94,9 @@ public class SendEmailNotificationService extends BaseObjectLoggable {
             multipart.addBodyPart(htmlBodyPart);
 
             message.setContent(multipart);
-            logger.debug(">>>>>>>>>>>>>>>>>>before send to: " + model.getTo());
+            logger.info(">>>>>>>>>>>>>>>>>>before send to: " + model.getTo());
             javaMailSender.send(message);
-            logger.debug(">>>>>>>>>>>>>>>>>>sendmail success to: " + model.getTo() + " --- " + htmlContent);
+            logger.info(">>>>>>>>>>>>>>>>>>sendmail success to: " + model.getTo() + " --- " + htmlContent);
         } catch (Exception e) {
             logger.error(">>>>>>>>>>>>>>>>>>>> loi gui mail ", e);
         }
