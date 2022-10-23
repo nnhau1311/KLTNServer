@@ -49,6 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             } else {
                 log.error("jwt is null");
+                log.error("api: {}", request.getRequestURL());
                 throw new ServiceException(ErrorCodeService.UN_AUTH);
             }
         } catch (Exception ex) {

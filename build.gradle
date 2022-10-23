@@ -34,6 +34,8 @@ dependencies {
     implementation 'org.modelmapper:modelmapper:2.1.1'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'org.freemarker:freemarker-gae:2.3.31'
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    implementation 'org.apache.commons:commons-lang3:3.0'
 
 }
 

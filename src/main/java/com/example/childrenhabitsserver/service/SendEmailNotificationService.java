@@ -52,7 +52,7 @@ public class SendEmailNotificationService extends BaseObjectLoggable {
 
     public void sendEmail(NotificationModel model) {
         String[] cc = model.getCc() == null ? new String[]{""} : model.getCc();
-        logger.debug(">>>>>>>>>>>>>>>>>>start sendmail to: " + model.getTo());
+        logger.info(">>>>>>>>>>>>>>>>>>start sendmail to: " + model.getTo());
         try {
             String htmlContent;
             if (model.getExternalTemplate() != null && model.getExternalTemplate()) {
@@ -94,9 +94,9 @@ public class SendEmailNotificationService extends BaseObjectLoggable {
             multipart.addBodyPart(htmlBodyPart);
 
             message.setContent(multipart);
-            logger.debug(">>>>>>>>>>>>>>>>>>before send to: " + model.getTo());
+            logger.info(">>>>>>>>>>>>>>>>>>before send to: " + model.getTo());
             javaMailSender.send(message);
-            logger.debug(">>>>>>>>>>>>>>>>>>sendmail success to: " + model.getTo() + " --- " + htmlContent);
+            logger.info(">>>>>>>>>>>>>>>>>>sendmail success to: " + model.getTo() + " --- " + htmlContent);
         } catch (Exception e) {
             logger.error(">>>>>>>>>>>>>>>>>>>> loi gui mail ", e);
         }

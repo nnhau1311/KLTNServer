@@ -25,9 +25,10 @@ public class HabitsStorage {
     private String id;
     private String habitsName;
     private String habitsType;
-    @Type(type = JPACustomType.JSONB)
-    @Column(columnDefinition = JPACustomType.JSONB_DEF)
-    private List<HabitsContent> habitsContentList;
+//    @Type(type = JPACustomType.JSONB)
+//    @Column(columnDefinition = JPACustomType.JSONB_DEF)
+//    @Embedded
+//    private List<HabitsContent> habitsContentList;
     private String content;
 
 }
