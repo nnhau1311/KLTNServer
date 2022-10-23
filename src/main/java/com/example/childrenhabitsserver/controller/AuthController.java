@@ -1,6 +1,7 @@
 package com.example.childrenhabitsserver.controller;
 
 import com.example.childrenhabitsserver.auth.JwtTokenProvider;
+import com.example.childrenhabitsserver.base.response.WrapResponse;
 import com.example.childrenhabitsserver.common.request.LoginRequest;
 import com.example.childrenhabitsserver.common.response.LoginResponse;
 import com.example.childrenhabitsserver.entity.CustomUserDetails;
@@ -33,7 +34,7 @@ public class AuthController {
     private JwtTokenProvider tokenProvider;
 
     @PostMapping("/login")
-    public LoginResponse authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public WrapResponse<Object> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         // Xác thực từ username và password.
         Authentication authentication = authenticationManager.authenticate(
@@ -49,11 +50,12 @@ public class AuthController {
 
         // Trả về jwt cho người dùng.
         String jwt = tokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal());
-        return new LoginResponse(jwt,"Bearer");
+//        return new LoginResponse(jwt,"Bearer");
+        return WrapResponse.ok(new LoginResponse(jwt,"Bearer"));
     }
 
     @PostMapping("/logout")
-    public String authenticateUserLogOut(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    public WrapResponse<Object> authenticateUserLogOut(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 //        String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
 //        request.logout();
         HttpSession session = request.getSession(false);
@@ -68,6 +70,7 @@ public class AuthController {
         } catch (Exception e) {
             log.error(">>>>>>>>>>>>>> clearContext error :",e);
         }
-        return "Done!";
+//        return "Done!";
+        return WrapResponse.ok("Done!");
     }
 }
