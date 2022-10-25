@@ -1,4 +1,4 @@
-package com.example.childrenhabitsserver.service;
+package com.example.childrenhabitsserver.base.exception;
 
 import com.example.childrenhabitsserver.base.BaseException;
 
