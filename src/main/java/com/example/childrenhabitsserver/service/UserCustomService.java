@@ -2,6 +2,7 @@ package com.example.childrenhabitsserver.service;
 
 import com.example.childrenhabitsserver.base.exception.ServiceException;
 import com.example.childrenhabitsserver.common.HostAddress;
+import com.example.childrenhabitsserver.common.UserStatus;
 import com.example.childrenhabitsserver.common.constant.ErrorCodeService;
 import com.example.childrenhabitsserver.common.request.user.CreateNewUserRequest;
 import com.example.childrenhabitsserver.common.request.user.ResetPasswordUserRequest;
@@ -42,7 +43,40 @@ public class UserCustomService {
                 .email(createNewUserRequest.getEmail())
                 .role(createNewUserRequest.getRole())
                 .userFullName(createNewUserRequest.getUserFullName())
+                .status(UserStatus.ACTIVE)
                 .build();
+        Map<String, Object> scopes = new HashMap<>();
+        scopes.put("userFullName", createNewUserRequest.getUserFullName());
+        scopes.put("userName", createNewUserRequest.getUserName());
+        NotificationModel notificationModel = NotificationModel.builder()
+                .to(createNewUserRequest.getEmail())
+                .template("CreateNewUserWithSystem")
+                .scopes(scopes)
+                .subject("Thông báo tạo tài khoản thành công")
+                .build();
+        sendEmailNotificationService.sendEmail(notificationModel);
+        return userRepository.save(userCustomStorge);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public UserCustomStorge signUpANewUser(CreateNewUserRequest createNewUserRequest){
+        UserCustomStorge userCustomStorgeDB = userRepository.findByUsernameOrEmailAndStatus(createNewUserRequest.getUserName(), createNewUserRequest.getEmail(), UserStatus.ACTIVE);
+        if (userCustomStorgeDB != null) {
+            log.error("Tìm thấy người dùng đã tồn tại: {} {}", userCustomStorgeDB.getUsername(), userCustomStorgeDB.getEmail());
+            throw new ServiceException(ErrorCodeService.USER_HAD_EXITS);
+        }
+        String passBCrypt = passwordEncoder.encode(createNewUserRequest.getUserPassword());
+        UserCustomStorge userCustomStorge = UserCustomStorge.builder()
+                .username(createNewUserRequest.getUserName())
+                .password(passBCrypt)
+                .email(createNewUserRequest.getEmail())
+                .role(createNewUserRequest.getRole())
+                .userFullName(createNewUserRequest.getUserFullName())
+                .status(UserStatus.DISABLE)
+                .build();
+        UserCustomStorge userCustomStorgeDBNew = userRepository.save(userCustomStorge);
+        String apiConfirmCreateUser = String.format("http://%s%s%s", HostAddress.serverAddress, "/user/confirm-create-new/", userCustomStorgeDBNew.getId());
+        log.info("apiConfirmCreateUser {}", apiConfirmCreateUser);
         Map<String, Object> scopes = new HashMap<>();
         scopes.put("userFullName", createNewUserRequest.getUserFullName());
         scopes.put("userName", createNewUserRequest.getUserName());
@@ -53,8 +87,36 @@ public class UserCustomService {
                 .subject("Xác nhận tạo tài khoản")
                 .build();
         sendEmailNotificationService.sendEmail(notificationModel);
-        return userRepository.save(userCustomStorge);
+        return userCustomStorgeDBNew;
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public UserCustomStorge confirmCreateNewUser(String userId){
+        if (StringUtils.isBlank(userId)) {
+            log.error("User ID không hợp lệ:" + userId);
+            throw new ServiceException(ErrorCodeService.USER_ID_NOT_VALID);
+        }
+        Optional<UserCustomStorge> userCustomStorgeOptional = userRepository.findById(userId);
+        if (!userCustomStorgeOptional.isPresent()) {
+            log.error("Không tìm thấy người dùng:" + userId);
+            throw new ServiceException(ErrorCodeService.USER_HAD_NOT_EXITS);
+        }
+        UserCustomStorge user = userCustomStorgeOptional.get();
+        user.setStatus(UserStatus.ACTIVE);
+//        Map<String, Object> scopes = new HashMap<>();
+//        scopes.put("userFullName", user.getUserFullName());
+//        scopes.put("userName", user.getUsername());
+//        scopes.put("newPassword", randomResetPassword);
+//        NotificationModel notificationModel = NotificationModel.builder()
+//                .to(user.getEmail())
+//                .template("NotifyResetPasswordUser")
+//                .scopes(scopes)
+//                .subject("Thông báo reset mật khẩu người dùng")
+//                .build();
+//        sendEmailNotificationService.sendEmail(notificationModel);
+        return userRepository.save(user);
+    }
+
     public String sendEmailToConfirmResetPassword(ResetPasswordUserRequest request){
         if (StringUtils.isBlank(request.getUserInfor())) {
             log.error("Request null hoặc rỗng:" + request.getUserInfor());
@@ -64,7 +126,7 @@ public class UserCustomService {
         UserCustomStorge user = userRepository.findByUsernameOrEmail(request.getUserInfor(), request.getUserInfor());
         if (user == null) {
             log.error("Không tìm thấy người dùng:" + request.getUserInfor());
-            throw new UsernameNotFoundException(request.getUserInfor());
+            throw new ServiceException(ErrorCodeService.USER_HAD_NOT_EXITS);
         }
         String apiAddressConfirm = String.format("http://%s%s%s", HostAddress.serverAddress, "/user/confirm-reset-password/", user.getId());
         log.info("apiAddressConfirm {}", apiAddressConfirm);
@@ -90,7 +152,7 @@ public class UserCustomService {
         Optional<UserCustomStorge> userCustomStorgeOptional = userRepository.findById(userId);
         if (!userCustomStorgeOptional.isPresent()) {
             log.error("Không tìm thấy người dùng:" + userId);
-            throw new UsernameNotFoundException(userId);
+            throw new ServiceException(ErrorCodeService.USER_HAD_NOT_EXITS);
         }
         UserCustomStorge user = userCustomStorgeOptional.get();
         String randomResetPassword = randomUtils.randomArrayStringWithOnlyLetter();
@@ -116,5 +178,17 @@ public class UserCustomService {
                 .build();
         sendEmailNotificationService.sendEmail(notificationModel);
         return userRepository.save(user);
+    }
+
+    // Query Data ====================================================
+
+    public UserCustomStorge findById(String userId) {
+        Optional<UserCustomStorge> userCustomStorgeOptional = userRepository.findById(userId);
+        if (!userCustomStorgeOptional.isPresent()) {
+            log.error("Không tìm thấy người dùng:" + userId);
+            throw new ServiceException(ErrorCodeService.USER_HAD_NOT_EXITS);
+        }
+        UserCustomStorge user = userCustomStorgeOptional.get();
+        return user;
     }
 }
