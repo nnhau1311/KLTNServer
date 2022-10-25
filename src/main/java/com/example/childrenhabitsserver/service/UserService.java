@@ -1,6 +1,7 @@
 package com.example.childrenhabitsserver.service;
 
 import com.example.childrenhabitsserver.base.exception.AccessDeniedException;
+import com.example.childrenhabitsserver.common.UserStatus;
 import com.example.childrenhabitsserver.common.constant.ErrorCodeService;
 import com.example.childrenhabitsserver.entity.CustomUserDetails;
 import com.example.childrenhabitsserver.entity.UserCustomStorge;
@@ -26,7 +27,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userInfor) throws UsernameNotFoundException {
         // Kiểm tra xem user có tồn tại trong database không?
-        UserCustomStorge user = userRepository.findByUsernameOrEmail(userInfor, userInfor);
+        UserCustomStorge user = userRepository.findByUsernameOrEmailAndStatus(userInfor, userInfor, UserStatus.ACTIVE);
 
         if (user == null) {
             log.error("Not found user with username:" + userInfor);

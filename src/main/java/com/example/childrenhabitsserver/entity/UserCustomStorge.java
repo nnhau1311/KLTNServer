@@ -28,6 +28,7 @@ public class UserCustomStorge {
     private String username; // tên đăng nhập
     @Column(name = "userPasswordCustom")
     private String password;
+    private Integer status;
     private String role;
     private String email;
     private String userFullName; // tên người dùng
