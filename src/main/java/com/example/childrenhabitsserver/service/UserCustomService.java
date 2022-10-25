@@ -1,5 +1,6 @@
 package com.example.childrenhabitsserver.service;
 
+import com.example.childrenhabitsserver.base.exception.ServiceException;
 import com.example.childrenhabitsserver.common.HostAddress;
 import com.example.childrenhabitsserver.common.constant.ErrorCodeService;
 import com.example.childrenhabitsserver.common.request.user.CreateNewUserRequest;

@@ -1,9 +1,10 @@
 package com.example.childrenhabitsserver.config;
 
 import com.example.childrenhabitsserver.auth.JwtAuthenticationFilter;
+import com.example.childrenhabitsserver.auth.JwtTokenProvider;
 import com.example.childrenhabitsserver.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -17,9 +18,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import javax.servlet.ServletException;
 
 @Configuration
 @EnableWebSecurity
@@ -27,12 +27,20 @@ import javax.servlet.ServletException;
 @EnableGlobalMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
 @Slf4j
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    UserService userService;
+
+
+    private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
+
+    public SecurityConfig(UserService userService,
+                          JwtTokenProvider jwtTokenProvider) {
+        this.userService = userService;
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter();
+        return new JwtAuthenticationFilter(jwtTokenProvider, userService);
     }
 
     @Bean(BeanIds.AUTHENTICATION_MANAGER)

@@ -1,10 +1,10 @@
 package com.example.childrenhabitsserver.config;
 import com.example.childrenhabitsserver.base.BaseException;
 import com.example.childrenhabitsserver.base.BaseObjectLoggable;
+import com.example.childrenhabitsserver.base.exception.AccessDeniedException;
 import com.example.childrenhabitsserver.base.response.WrapResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -100,16 +100,18 @@ public class GlobalWebExceptionHandle extends BaseObjectLoggable {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex) {
+    @ResponseStatus(code = HttpStatus.FORBIDDEN)
+//    public ResponseEntity<Object> handleAccessDeniedException(Exception ex) {
+    public WrapResponse<Object> handleAccessDeniedException(Exception ex) {
         WrapResponse baseResponse = new WrapResponse();
         baseResponse.setSuccess(false);
         baseResponse.setStatusCode("403");
         baseResponse.setErrorCode("Không có xác thực");
 
         baseResponse.setMessage(Arrays.asList(ex.getMessage()));
-        return ResponseEntity.status(HttpStatus.FORBIDDEN.value())
-                .body(baseResponse);
+//        return ResponseEntity.status(HttpStatus.FORBIDDEN.value())
+//                .body(baseResponse);
+        return WrapResponse.error(ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

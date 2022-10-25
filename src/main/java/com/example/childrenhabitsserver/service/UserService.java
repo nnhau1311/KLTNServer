@@ -1,10 +1,11 @@
 package com.example.childrenhabitsserver.service;
 
+import com.example.childrenhabitsserver.base.exception.AccessDeniedException;
+import com.example.childrenhabitsserver.common.constant.ErrorCodeService;
 import com.example.childrenhabitsserver.entity.CustomUserDetails;
 import com.example.childrenhabitsserver.entity.UserCustomStorge;
 import com.example.childrenhabitsserver.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,8 +16,11 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class UserService implements UserDetailsService {
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
 
     @Override
@@ -26,7 +30,8 @@ public class UserService implements UserDetailsService {
 
         if (user == null) {
             log.error("Not found user with username:" + userInfor);
-            throw new UsernameNotFoundException(userInfor);
+//            throw new UsernameNotFoundException(userInfor);
+            throw new AccessDeniedException(ErrorCodeService.LOGIN_INVALID);
         }
         return new CustomUserDetails(user);
     }
