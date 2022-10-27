@@ -27,10 +27,11 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userInfor) throws UsernameNotFoundException {
         // Kiểm tra xem user có tồn tại trong database không?
-        UserCustomStorge user = userRepository.findByUsernameOrEmailAndStatus(userInfor, userInfor, UserStatus.ACTIVE);
-
-        if (user == null) {
+        UserCustomStorge user = userRepository.findByUsernameOrEmail(userInfor, userInfor);
+        log.info("user: {}", user.toString());
+        if (user == null || user.getStatus() != UserStatus.ACTIVE) {
             log.error("Not found user with username:" + userInfor);
+            log.error("User status:" + user.getStatus());
 //            throw new UsernameNotFoundException(userInfor);
             throw new AccessDeniedException(ErrorCodeService.LOGIN_INVALID);
         }
@@ -41,6 +42,9 @@ public class UserService implements UserDetailsService {
         Optional<UserCustomStorge> userOptional = userRepository.findById(id);
         if(userOptional.isPresent()){
             UserCustomStorge user = userOptional.get();
+            if (user.getStatus() != UserStatus.ACTIVE) {
+                throw new IndexOutOfBoundsException("User with id: "+id+" is inactive");
+            }
             return new CustomUserDetails(user);
         }else {
             throw new IndexOutOfBoundsException("Not found user with id: "+id);

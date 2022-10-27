@@ -15,6 +15,7 @@ import java.util.Collection;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class UserCustomStorge {
 
     @Id
