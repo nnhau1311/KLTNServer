@@ -60,8 +60,8 @@ public class UserCustomService {
 
     @Transactional(rollbackFor = Exception.class)
     public UserCustomStorge signUpANewUser(CreateNewUserRequest createNewUserRequest){
-        UserCustomStorge userCustomStorgeDB = userRepository.findByUsernameOrEmailAndStatus(createNewUserRequest.getUserName(), createNewUserRequest.getEmail(), UserStatus.ACTIVE);
-        if (userCustomStorgeDB != null) {
+        UserCustomStorge userCustomStorgeDB = userRepository.findByUsernameOrEmail(createNewUserRequest.getUserName(), createNewUserRequest.getEmail());
+        if (userCustomStorgeDB != null && userCustomStorgeDB.getStatus() == UserStatus.ACTIVE) {
             log.error("Tìm thấy người dùng đã tồn tại: {} {}", userCustomStorgeDB.getUsername(), userCustomStorgeDB.getEmail());
             throw new ServiceException(ErrorCodeService.USER_HAD_EXITS);
         }
@@ -80,6 +80,7 @@ public class UserCustomService {
         Map<String, Object> scopes = new HashMap<>();
         scopes.put("userFullName", createNewUserRequest.getUserFullName());
         scopes.put("userName", createNewUserRequest.getUserName());
+        scopes.put("apiConfirmCreateUser", apiConfirmCreateUser);
         NotificationModel notificationModel = NotificationModel.builder()
                 .to(createNewUserRequest.getEmail())
                 .template("ConfirmCreateNewUser")

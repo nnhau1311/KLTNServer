@@ -36,7 +36,7 @@ public class UserController {
         return WrapResponse.ok(customUserDetailsService.signUpANewUser(createNewUserRequest));
     }
 
-    @RequestMapping(value = "/confirm-create-new/{userId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/confirm-create-new/{userId}", method = RequestMethod.GET)
     public WrapResponse<Object> confirmSignUpANewUser(@PathVariable String userId) {
         // Kiểm tra 1 số điều kiện cơ bản và xác nhận khi tạo user
         return WrapResponse.ok(customUserDetailsService.confirmCreateNewUser(userId));
