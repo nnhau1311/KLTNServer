@@ -1,5 +1,6 @@
 package com.example.childrenhabitsserver.controller;
 
+import com.example.childrenhabitsserver.common.request.user.ChangePasswordUserRequest;
 import com.example.childrenhabitsserver.common.request.user.CreateNewUserRequest;
 import com.example.childrenhabitsserver.base.response.WrapResponse;
 import com.example.childrenhabitsserver.common.request.user.ResetPasswordUserRequest;
@@ -38,8 +39,12 @@ public class UserController {
 
     @RequestMapping(value = "/confirm-create-new/{userId}", method = RequestMethod.GET)
     public WrapResponse<Object> confirmSignUpANewUser(@PathVariable String userId) {
-        // Kiểm tra 1 số điều kiện cơ bản và xác nhận khi tạo user
         return WrapResponse.ok(customUserDetailsService.confirmCreateNewUser(userId));
+    }
+
+    @RequestMapping(value = "/change-password", method = RequestMethod.POST)
+    public WrapResponse<Object> changePassword(@Valid @RequestBody ChangePasswordUserRequest changePasswordUserRequest) {
+        return WrapResponse.ok(customUserDetailsService.changePassword(changePasswordUserRequest));
     }
 
     @RequestMapping(value = "/request-reset-password", method = RequestMethod.POST)
