@@ -43,11 +43,11 @@ public class UserService implements UserDetailsService {
         if(userOptional.isPresent()){
             UserCustomStorge user = userOptional.get();
             if (user.getStatus() != UserStatus.ACTIVE) {
-                throw new IndexOutOfBoundsException("User with id: "+id+" is inactive");
+                throw new AccessDeniedException("User with id: "+id+" is inactive");
             }
             return new CustomUserDetails(user);
         }else {
-            throw new IndexOutOfBoundsException("Not found user with id: "+id);
+            throw new AccessDeniedException("User with id: "+id+" is inactive");
         }
 
     }

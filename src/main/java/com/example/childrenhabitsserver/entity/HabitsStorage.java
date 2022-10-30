@@ -3,6 +3,7 @@ package com.example.childrenhabitsserver.entity;
 import com.example.childrenhabitsserver.base.database.JPACustomType;
 import com.example.childrenhabitsserver.model.HabitsContent;
 import lombok.*;
+import org.hibernate.annotations.CollectionId;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -28,8 +29,9 @@ public class HabitsStorage {
 //    @Type(type = JPACustomType.JSONB)
 //    @Column(columnDefinition = JPACustomType.JSONB_DEF)
 //    @Embedded
-//    private List<HabitsContent> habitsContentList;
-    private String content;
+    @ElementCollection
+    private List<HabitsContent> habitsContentList;
+//    private String content;
 
 }
 
