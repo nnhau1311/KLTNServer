@@ -1,5 +1,6 @@
 package com.example.childrenhabitsserver.controller;
 
+import com.example.childrenhabitsserver.auth.JwtTokenProvider;
 import com.example.childrenhabitsserver.common.request.user.ChangePasswordUserRequest;
 import com.example.childrenhabitsserver.common.request.user.CreateNewUserRequest;
 import com.example.childrenhabitsserver.base.response.WrapResponse;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -20,9 +22,11 @@ public class UserController {
     AuthenticationManager authenticationManager;
 
     private final UserCustomService customUserDetailsService;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public UserController(UserCustomService customUserDetailsService) {
+    public UserController(UserCustomService customUserDetailsService, JwtTokenProvider jwtTokenProvider) {
         this.customUserDetailsService = customUserDetailsService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
@@ -43,8 +47,9 @@ public class UserController {
     }
 
     @RequestMapping(value = "/change-password", method = RequestMethod.POST)
-    public WrapResponse<Object> changePassword(@Valid @RequestBody ChangePasswordUserRequest changePasswordUserRequest) {
-        return WrapResponse.ok(customUserDetailsService.changePassword(changePasswordUserRequest));
+    public WrapResponse<Object> changePassword(HttpServletRequest request, @Valid @RequestBody ChangePasswordUserRequest changePasswordUserRequest) {
+        String userId = jwtTokenProvider.getUserIdFromJWT(request.getHeader("Authorization"));
+        return WrapResponse.ok(customUserDetailsService.changePassword(userId, changePasswordUserRequest));
     }
 
     @RequestMapping(value = "/request-reset-password", method = RequestMethod.POST)
