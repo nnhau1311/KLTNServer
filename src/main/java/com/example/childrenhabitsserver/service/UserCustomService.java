@@ -1,5 +1,6 @@
 package com.example.childrenhabitsserver.service;
 
+import com.example.childrenhabitsserver.auth.JwtTokenProvider;
 import com.example.childrenhabitsserver.base.exception.ServiceException;
 import com.example.childrenhabitsserver.common.HostAddress;
 import com.example.childrenhabitsserver.common.UserStatus;
@@ -13,7 +14,6 @@ import com.example.childrenhabitsserver.repository.UserRepository;
 import com.example.childrenhabitsserver.utils.RandomUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,12 +27,14 @@ public class UserCustomService {
     private final PasswordEncoder passwordEncoder;
     private final SendEmailNotificationService sendEmailNotificationService;
     private final RandomUtils randomUtils;
+    private final JwtTokenProvider JwtTokenProvider;
 
-    public UserCustomService(UserRepository userRepository, PasswordEncoder passwordEncoder, SendEmailNotificationService sendEmailNotificationService, RandomUtils randomUtils) {
+    public UserCustomService(UserRepository userRepository, PasswordEncoder passwordEncoder, SendEmailNotificationService sendEmailNotificationService, RandomUtils randomUtils, com.example.childrenhabitsserver.auth.JwtTokenProvider jwtTokenProvider) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.sendEmailNotificationService = sendEmailNotificationService;
         this.randomUtils = randomUtils;
+        JwtTokenProvider = jwtTokenProvider;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -109,14 +111,15 @@ public class UserCustomService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public UserCustomStorge changePassword(ChangePasswordUserRequest request){
-        if (StringUtils.isBlank(request.getUserId())) {
-            log.error("User ID không hợp lệ:" + request.getUserId());
+    public UserCustomStorge changePassword(String userId, ChangePasswordUserRequest request){
+
+        if (StringUtils.isBlank(userId)) {
+            log.error("User ID không hợp lệ:" + userId);
             throw new ServiceException(ErrorCodeService.USER_ID_NOT_VALID);
         }
-        Optional<UserCustomStorge> userCustomStorgeOptional = userRepository.findById(request.getUserId());
+        Optional<UserCustomStorge> userCustomStorgeOptional = userRepository.findById(userId);
         if (!userCustomStorgeOptional.isPresent()) {
-            log.error("Không tìm thấy người dùng:" + request.getUserId());
+            log.error("Không tìm thấy người dùng:" + userId);
             throw new ServiceException(ErrorCodeService.USER_HAD_NOT_EXITS);
         }
         UserCustomStorge user = userCustomStorgeOptional.get();

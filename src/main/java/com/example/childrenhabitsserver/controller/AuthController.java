@@ -51,7 +51,7 @@ public class AuthController {
         // Trả về jwt cho người dùng.
         String jwt = tokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal());
 //        return new LoginResponse(jwt,"Bearer");
-        return WrapResponse.ok(new LoginResponse(((CustomUserDetails) authentication.getPrincipal()).getUser().getId(), jwt, "Bearer"));
+        return WrapResponse.ok(new LoginResponse(jwt, "Bearer"));
     }
 
     @PostMapping("/logout")
