@@ -2,6 +2,7 @@ package com.example.childrenhabitsserver.config;
 import com.example.childrenhabitsserver.base.BaseException;
 import com.example.childrenhabitsserver.base.BaseObjectLoggable;
 import com.example.childrenhabitsserver.base.exception.AccessDeniedException;
+import com.example.childrenhabitsserver.base.exception.ServiceException;
 import com.example.childrenhabitsserver.base.response.WrapResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,19 +19,32 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalWebExceptionHandle extends BaseObjectLoggable {
+
     @ExceptionHandler(BaseException.class)
     @ResponseStatus(code = HttpStatus.UNPROCESSABLE_ENTITY)
-    public ResponseEntity<Object> handleBaseExceptions(BaseException baseException) {
+    public WrapResponse<Object> handleBaseExceptions(BaseException baseException) {
         baseException.printStackTrace();
         WrapResponse baseResponse = new WrapResponse();
         baseResponse.setSuccess(false);
         baseResponse.setStatusCode("422");
         baseResponse.setErrorCode(baseException.getErrorCode());
         baseResponse.setMessage(Arrays.asList(baseException.getMessage()));
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY.value())
-                .body(baseResponse);
+//        return WrapResponse.error(baseException.getMessage());
+        return baseResponse;
     }
 
+    @ExceptionHandler(ServiceException.class)
+    @ResponseStatus(code = HttpStatus.UNPROCESSABLE_ENTITY)
+    public WrapResponse<Object> handleServiceExceptions(ServiceException serviceException) {
+        serviceException.printStackTrace();
+        WrapResponse baseResponse = new WrapResponse();
+        baseResponse.setSuccess(false);
+        baseResponse.setStatusCode("505");
+        baseResponse.setErrorCode(serviceException.getErrorCode());
+        baseResponse.setMessage(Arrays.asList(serviceException.getMessage()));
+//        return WrapResponse.error(serviceException.getMessage());
+        return baseResponse;
+    }
 //    @ExceptionHandler(BlockedUserException.class)
 //    @ResponseStatus(code = HttpStatus.UNPROCESSABLE_ENTITY)
 //    public ResponseEntity<Object> handleBlockedExceptions(BaseException baseException) {
@@ -86,23 +100,23 @@ public class GlobalWebExceptionHandle extends BaseObjectLoggable {
 //    }
 //
     @ExceptionHandler(BadCredentialsException.class)
-    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<Object> handleAccessDeniedException(BadCredentialsException ex) {
+    @ResponseStatus(code = HttpStatus.FORBIDDEN)
+    public WrapResponse<Object> handleAccessDeniedException(BadCredentialsException ex) {
         WrapResponse baseResponse = new WrapResponse();
         baseResponse.setSuccess(false);
         baseResponse.setStatusCode("410");
-        baseResponse.setErrorCode("Thông tin đăng nhập không hợp lệ");
+        baseResponse.setErrorCode(ex.getMessage());
 //        List<String> errorMsg = new ArrayList<>();
 //        errorMsg.add(MessageSourceUtils.getMessagePermissions(ex.getMessage()));
-        baseResponse.setMessage(Arrays.asList(ex.getMessage()));
-        return ResponseEntity.status(HttpStatus.FORBIDDEN.value())
-                .body(baseResponse);
+        baseResponse.setMessage(Arrays.asList("Thông tin đăng nhập không hợp lệ"));
+//        return WrapResponse.error(ex.getMessage());
+        return baseResponse;
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(code = HttpStatus.FORBIDDEN)
 //    public ResponseEntity<Object> handleAccessDeniedException(Exception ex) {
-    public WrapResponse<Object> handleAccessDeniedException(Exception ex) {
+    public WrapResponse<Object> handleAccessDeniedException(AccessDeniedException ex) {
         WrapResponse baseResponse = new WrapResponse();
         baseResponse.setSuccess(false);
         baseResponse.setStatusCode("403");
@@ -111,24 +125,24 @@ public class GlobalWebExceptionHandle extends BaseObjectLoggable {
         baseResponse.setMessage(Arrays.asList(ex.getMessage()));
 //        return ResponseEntity.status(HttpStatus.FORBIDDEN.value())
 //                .body(baseResponse);
-        return WrapResponse.error(ex.getMessage());
+//        return WrapResponse.error(ex.getMessage());
+        return baseResponse;
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<Object> handleExceptions(Exception ex) {
-        if (ex.getClass().getName().equals("io.eventuate.EventuateCommandProcessingFailedException")
-                && ex.getCause() instanceof BaseException
-        ) {
-            return handleBaseExceptions((BaseException) ex.getCause());
-        }
+    public WrapResponse<Object> handleExceptions(Exception ex) {
+//        if (ex.getClass().getName().equals("io.eventuate.EventuateCommandProcessingFailedException")
+//                && ex.getCause() instanceof BaseException
+//        ) {
+//            return handleBaseExceptions((BaseException) ex.getCause());
+//        }
         ex.printStackTrace();
         WrapResponse baseResponse = new WrapResponse();
         baseResponse.setSuccess(false);
         baseResponse.setStatusCode("500");
         baseResponse.setErrorCode("Hệ thống không thể xử lý");
         baseResponse.setMessage(Arrays.asList(ex.getMessage()));
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .body(baseResponse);
+        return baseResponse;
     }
 }
