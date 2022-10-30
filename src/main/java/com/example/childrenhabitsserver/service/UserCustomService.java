@@ -4,6 +4,7 @@ import com.example.childrenhabitsserver.base.exception.ServiceException;
 import com.example.childrenhabitsserver.common.HostAddress;
 import com.example.childrenhabitsserver.common.UserStatus;
 import com.example.childrenhabitsserver.common.constant.ErrorCodeService;
+import com.example.childrenhabitsserver.common.request.user.ChangePasswordUserRequest;
 import com.example.childrenhabitsserver.common.request.user.CreateNewUserRequest;
 import com.example.childrenhabitsserver.common.request.user.ResetPasswordUserRequest;
 import com.example.childrenhabitsserver.entity.UserCustomStorge;
@@ -104,17 +105,27 @@ public class UserCustomService {
         }
         UserCustomStorge user = userCustomStorgeOptional.get();
         user.setStatus(UserStatus.ACTIVE);
-//        Map<String, Object> scopes = new HashMap<>();
-//        scopes.put("userFullName", user.getUserFullName());
-//        scopes.put("userName", user.getUsername());
-//        scopes.put("newPassword", randomResetPassword);
-//        NotificationModel notificationModel = NotificationModel.builder()
-//                .to(user.getEmail())
-//                .template("NotifyResetPasswordUser")
-//                .scopes(scopes)
-//                .subject("Thông báo reset mật khẩu người dùng")
-//                .build();
-//        sendEmailNotificationService.sendEmail(notificationModel);
+        return userRepository.save(user);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public UserCustomStorge changePassword(ChangePasswordUserRequest request){
+        if (StringUtils.isBlank(request.getUserId())) {
+            log.error("User ID không hợp lệ:" + request.getUserId());
+            throw new ServiceException(ErrorCodeService.USER_ID_NOT_VALID);
+        }
+        Optional<UserCustomStorge> userCustomStorgeOptional = userRepository.findById(request.getUserId());
+        if (!userCustomStorgeOptional.isPresent()) {
+            log.error("Không tìm thấy người dùng:" + request.getUserId());
+            throw new ServiceException(ErrorCodeService.USER_HAD_NOT_EXITS);
+        }
+        UserCustomStorge user = userCustomStorgeOptional.get();
+        Boolean isMatchPassword = passwordEncoder.matches(request.getOldPassword(), user.getPassword());
+        if (isMatchPassword) {
+            log.info("New pass: {}", request.getNewPassword());
+            String passBCrypt = passwordEncoder.encode(request.getNewPassword());
+            user.setPassword(passBCrypt);
+        }
         return userRepository.save(user);
     }
 
@@ -160,13 +171,8 @@ public class UserCustomService {
         log.info("New pass: {}", randomResetPassword);
         String passBCrypt = passwordEncoder.encode(randomResetPassword);
         user.setPassword(passBCrypt);
-//        UserCustomStorge userCustomStorge = UserCustomStorge.builder()
-//                .username(createNewUserRequest.getUserName())
-//                .password(passBCrypt)
-//                .email(createNewUserRequest.getEmail())
-//                .role(createNewUserRequest.getRole())
-//                .userFullName(createNewUserRequest.getUserFullName())
-//                .build();
+
+        // Gửi email
         Map<String, Object> scopes = new HashMap<>();
         scopes.put("userFullName", user.getUserFullName());
         scopes.put("userName", user.getUsername());
