@@ -51,7 +51,7 @@ public class AuthController {
         // Trả về jwt cho người dùng.
         String jwt = tokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal());
 //        return new LoginResponse(jwt,"Bearer");
-        return WrapResponse.ok(new LoginResponse(jwt,"Bearer"));
+        return WrapResponse.ok(new LoginResponse(((CustomUserDetails) authentication.getPrincipal()).getUser().getId(), jwt, "Bearer"));
     }
 
     @PostMapping("/logout")
@@ -68,7 +68,7 @@ public class AuthController {
             context.setAuthentication(null);
             SecurityContextHolder.clearContext();
         } catch (Exception e) {
-            log.error(">>>>>>>>>>>>>> clearContext error :",e);
+            log.error(">>>>>>>>>>>>>> clearContext error :", e);
         }
 //        return "Done!";
         return WrapResponse.ok("Done!");

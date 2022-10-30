@@ -59,4 +59,11 @@ public class UserController {
         log.info("Reset password id {}", userId);
         return WrapResponse.ok(customUserDetailsService.resetPassword(userId));
     }
+
+    // QUERY ====================================================
+    @RequestMapping(value = "/find-by-id/{userId}", method = RequestMethod.GET)
+    public WrapResponse<Object> findById(@PathVariable String userId) {
+        return WrapResponse.ok(customUserDetailsService.findById(userId));
+    }
+
 }
