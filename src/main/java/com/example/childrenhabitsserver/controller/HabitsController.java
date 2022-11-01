@@ -1,5 +1,6 @@
 package com.example.childrenhabitsserver.controller;
 
+import com.example.childrenhabitsserver.common.request.habits.CreateHabitsRequest;
 import com.example.childrenhabitsserver.entity.HabitsStorage;
 import com.example.childrenhabitsserver.entity.TestJPA;
 import com.example.childrenhabitsserver.model.NotificationModel;
@@ -25,16 +26,14 @@ public class HabitsController {
         this.habitsService = habitsService;
     }
 
-    @RequestMapping(value = "/testSave", method = RequestMethod.POST)
-    public String saveTest(){
-        habitsService.testSaveRepo();
-        return "done";
+    @RequestMapping(value = "/create-a-new", method = RequestMethod.POST)
+    public HabitsStorage saveTest(@RequestBody CreateHabitsRequest createHabitsRequest){
+        return habitsService.createANewHabits(createHabitsRequest);
     }
 
-    @RequestMapping(value = "/getAll", method = RequestMethod.POST)
-    public List<HabitsStorage> getAllTest(){
-//        log.info(SecurityContextHolder.getContext().getAuthentication().getDetails());
-        return habitsService.getAllRepo();
+    @RequestMapping(value = "/get-all", method = RequestMethod.GET)
+    public List<HabitsStorage> getAllHabits(){
+        return habitsService.getAllHabits();
     }
 
 

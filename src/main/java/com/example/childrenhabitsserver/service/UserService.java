@@ -46,7 +46,7 @@ public class UserService implements UserDetailsService {
                 throw new AccessDeniedException("User with id: "+id+" is inactive");
             }
             return new CustomUserDetails(user);
-        }else {
+        } else {
             throw new AccessDeniedException("User with id: "+id+" is inactive");
         }
 

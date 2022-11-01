@@ -12,6 +12,6 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class HabitsContent {
     private String typeContent; //Định dạng nội dung
-    private String Body; //Định dạng nội dung
+    private String body; //Định dạng nội dung
 
 }
