@@ -4,6 +4,9 @@ import com.example.childrenhabitsserver.base.BaseObjectLoggable;
 import com.example.childrenhabitsserver.base.exception.AccessDeniedException;
 import com.example.childrenhabitsserver.base.exception.ServiceException;
 import com.example.childrenhabitsserver.base.response.WrapResponse;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -141,6 +145,18 @@ public class GlobalWebExceptionHandle extends BaseObjectLoggable {
         WrapResponse baseResponse = new WrapResponse();
         baseResponse.setSuccess(false);
         baseResponse.setStatusCode("500");
+        baseResponse.setErrorCode("Hệ thống không thể xử lý");
+        baseResponse.setMessage(Arrays.asList(ex.getMessage()));
+        return baseResponse;
+    }
+
+    @ExceptionHandler({MalformedJwtException.class, JwtException.class,
+            UnsupportedJwtException.class,IllegalArgumentException.class})
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public WrapResponse<Object> JWTExceptionHandler(Exception ex, WebRequest request) {
+        WrapResponse baseResponse = new WrapResponse();
+        baseResponse.setSuccess(false);
+        baseResponse.setStatusCode("403");
         baseResponse.setErrorCode("Hệ thống không thể xử lý");
         baseResponse.setMessage(Arrays.asList(ex.getMessage()));
         return baseResponse;
