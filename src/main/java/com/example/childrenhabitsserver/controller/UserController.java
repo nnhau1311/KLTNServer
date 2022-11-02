@@ -8,6 +8,7 @@ import com.example.childrenhabitsserver.common.request.user.ResetPasswordUserReq
 import com.example.childrenhabitsserver.service.UserCustomService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,8 +48,9 @@ public class UserController {
     }
 
     @RequestMapping(value = "/change-password", method = RequestMethod.POST)
-    public WrapResponse<Object> changePassword(HttpServletRequest request, @Valid @RequestBody ChangePasswordUserRequest changePasswordUserRequest) {
-        String userId = jwtTokenProvider.getUserIdFromJWT(request.getHeader("Authorization"));
+    public WrapResponse<Object> changePassword(@RequestHeader(HttpHeaders.AUTHORIZATION) String tokenHeader, @Valid @RequestBody ChangePasswordUserRequest changePasswordUserRequest) {
+        String token = tokenHeader.replace("Bearer ", "");
+        String userId = jwtTokenProvider.getUserIdFromJWT(token);
         return WrapResponse.ok(customUserDetailsService.changePassword(userId, changePasswordUserRequest));
     }
 

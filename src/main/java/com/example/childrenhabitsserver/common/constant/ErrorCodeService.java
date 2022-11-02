@@ -9,4 +9,7 @@ public class ErrorCodeService {
     public static final String USER_ID_NOT_VALID = "USER.USER_ID_NOT_VALID";
 
     public static final String REQUEST_RESET_PASSWORD_INVALID = "COMMON.REQUEST_RESET_PASSWORD_INVALID";
+
+    public static final String ID_HABITS_INVALID= "HABITS.ID_HABITS_INVALID";
+    public static final String HABITS_NOT_EXITS= "HABITS.HABITS_NOT_EXITS";
 }
