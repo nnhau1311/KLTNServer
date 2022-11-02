@@ -26,9 +26,7 @@ public class HabitsStorage {
     private String id;
     private String habitsName;
     private String habitsType;
-//    @Type(type = JPACustomType.JSONB)
-//    @Column(columnDefinition = JPACustomType.JSONB_DEF)
-//    @Embedded
+    private String typeOfFinishCourse; // Loại định nghĩa hoàn thành theo % hay cột mốc
     @ElementCollection
     private List<HabitsContent> habitsContentList;
 //    private String content;

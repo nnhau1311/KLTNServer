@@ -16,6 +16,7 @@ public class CreateHabitsRequest {
 
     private String habitsName;
     private String habitsType;
+    private String typeOfFinishCourse;
     private List<HabitsContent> habitsContentList;
 }
 
