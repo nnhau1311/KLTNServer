@@ -1,6 +1,9 @@
 package com.example.childrenhabitsserver.service;
 
+import com.example.childrenhabitsserver.base.exception.ServiceException;
+import com.example.childrenhabitsserver.common.constant.ErrorCodeService;
 import com.example.childrenhabitsserver.common.request.habits.CreateHabitsRequest;
+import com.example.childrenhabitsserver.common.request.habits.UpdateHabitsRequest;
 import com.example.childrenhabitsserver.entity.HabitsStorage;
 import com.example.childrenhabitsserver.entity.TestJPA;
 import com.example.childrenhabitsserver.model.HabitsContent;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class HabitsService {
@@ -23,6 +27,16 @@ public class HabitsService {
     public HabitsStorage createANewHabits(CreateHabitsRequest createHabitsRequest){
         HabitsStorage habitsStorage = MappingUtils.mapObject(createHabitsRequest, HabitsStorage.class);
          return habitsRepo.save(habitsStorage);
+    }
+
+    public HabitsStorage updateAHabits(String habitsId, UpdateHabitsRequest updateHabitsRequest){
+        Optional<HabitsStorage> optionalHabitsStorage = habitsRepo.findById(habitsId);
+        if (!optionalHabitsStorage.isPresent()) {
+            throw new ServiceException(ErrorCodeService.HABITS_NOT_EXITS);
+        }
+        HabitsStorage habitsStorage = optionalHabitsStorage.get();
+        habitsStorage = MappingUtils.mapObject(updateHabitsRequest, HabitsStorage.class);
+        return habitsRepo.save(habitsStorage);
     }
 
     public List<HabitsStorage> getAllHabits(){
