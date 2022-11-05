@@ -151,13 +151,15 @@ public class GlobalWebExceptionHandle extends BaseObjectLoggable {
     }
 
     @ExceptionHandler({MalformedJwtException.class, JwtException.class,
-            UnsupportedJwtException.class,IllegalArgumentException.class})
+            UnsupportedJwtException.class})
+//            UnsupportedJwtException.class,IllegalArgumentException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public WrapResponse<Object> JWTExceptionHandler(Exception ex, WebRequest request) {
         WrapResponse baseResponse = new WrapResponse();
         baseResponse.setSuccess(false);
-        baseResponse.setStatusCode("403");
+        baseResponse.setStatusCode("405");
         baseResponse.setErrorCode("Hệ thống không thể xử lý");
+        logger.error(ex.getMessage());
         baseResponse.setMessage(Arrays.asList(ex.getMessage()));
         return baseResponse;
     }
