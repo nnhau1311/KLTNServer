@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -26,8 +27,15 @@ public class UserHabitsStorage {
     private String userId;
     private String habitsId;
     private String typeOfFinishCourse; // Loại hoàn thành hạn mục này
-    private String totalLevelComplete; // Mức độ hoàn thành dưới dạng chữ (mức độ)
-    private Double totalPercentComplete; // Mức độ hoàn thành phần trăm
+//    private String totalLevelComplete; // Mức độ hoàn thành dưới dạng chữ (mức độ)
+//    private Double totalPercentComplete; // Mức độ hoàn thành phần trăm
+    private String totalCourse;
+    private String executeCourse;
+    private Integer status = 0; // Mặc định 0 là chưa hoàn thành
+    private Date startDate;
+    private Date endDate;
+    private Date createDate;
+    private Date updateDate;
     @ElementCollection
     private List<UserHabitsContent> habitsContents;
 

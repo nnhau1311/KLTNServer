@@ -2,6 +2,7 @@ package com.example.childrenhabitsserver.service;
 
 import com.example.childrenhabitsserver.base.exception.ServiceException;
 import com.example.childrenhabitsserver.common.constant.ErrorCodeService;
+import com.example.childrenhabitsserver.common.constant.TypeOfFinishCourse;
 import com.example.childrenhabitsserver.common.request.habits.CreateHabitsRequest;
 import com.example.childrenhabitsserver.common.request.habits.UpdateHabitsRequest;
 import com.example.childrenhabitsserver.entity.HabitsStorage;
@@ -10,6 +11,9 @@ import com.example.childrenhabitsserver.model.HabitsContent;
 import com.example.childrenhabitsserver.repository.HabitsRepo;
 import com.example.childrenhabitsserver.repository.TestRepo;
 import com.example.childrenhabitsserver.utils.MappingUtils;
+import com.example.childrenhabitsserver.utils.PageableUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,7 +30,22 @@ public class HabitsService {
 
     public HabitsStorage createANewHabits(CreateHabitsRequest createHabitsRequest){
         HabitsStorage habitsStorage = MappingUtils.mapObject(createHabitsRequest, HabitsStorage.class);
-         return habitsRepo.save(habitsStorage);
+        Integer totalDateExecute = 0;
+        for(HabitsContent habitsContent: createHabitsRequest.getHabitsContentList()) {
+            totalDateExecute += habitsContent.getNumberDateExecute();
+        }
+        switch (createHabitsRequest.getTypeOfFinishCourse()){
+            case TypeOfFinishCourse.PERIOD:
+                habitsStorage.setTotalCourse(String.valueOf(createHabitsRequest.getHabitsContentList().size()));
+                break;
+            case TypeOfFinishCourse.PERCENTAGE:
+                habitsStorage.setTotalCourse("100");
+                break;
+            default:
+                break;
+        }
+        habitsStorage.setNumberDateExecute(totalDateExecute);
+        return habitsRepo.save(habitsStorage);
     }
 
     public HabitsStorage updateAHabits(String habitsId, UpdateHabitsRequest updateHabitsRequest){
@@ -39,7 +58,8 @@ public class HabitsService {
         return habitsRepo.save(habitsStorage);
     }
 
-    public List<HabitsStorage> getAllHabits(){
-        return habitsRepo.findAll();
+    public Page<HabitsStorage> getAllHabits(){
+        Pageable pageable = PageableUtils.convertPageableAndSort(0, 10, new ArrayList<>());
+        return habitsRepo.findAll(pageable);
     }
 }

@@ -16,7 +16,8 @@ public class CreateHabitsRequest {
 
     private String habitsName;
     private String habitsType;
-    private String typeOfFinishCourse;
+    private String typeOfFinishCourse = "percentage";
+    private String totalCourse = "100";
     private List<HabitsContent> habitsContentList;
 }
 

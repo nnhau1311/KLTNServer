@@ -13,7 +13,9 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Embeddable
 public class HabitsContent {
-//    private String typeOfFinishCourse; // Loại định nghĩa hoàn thành theo % hay cột mốc
+    private String typeOfFinishCourse; // Loại định nghĩa hoàn thành theo % hay cột mốc
+    private String totalCourse;
+    private Integer numberDateExecute;
     private String typeContent; //Định dạng nội dung
     private String body; //Định dạng nội dung
 
