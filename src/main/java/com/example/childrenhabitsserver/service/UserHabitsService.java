@@ -40,8 +40,10 @@ public class UserHabitsService {
                 .userId(userId)
                 .habitsId(createUserHabitsRequest.getHabitsId())
                 .typeOfFinishCourse(habitsStorage.getTypeOfFinishCourse())
-                .totalLevelComplete("0")
-                .totalPercentComplete(0d)
+//                .totalLevelComplete("0")
+//                .totalPercentComplete(0d)
+                .totalCourse("0")
+                .executeCourse("0")
                 .habitsContents(userHabitsContent)
                 .build();
         return userHabitsRepo.save(userHabitsStorage);
@@ -50,4 +52,5 @@ public class UserHabitsService {
     public List<UserHabitsStorage> getAllUserHabits(){
         return userHabitsRepo.findAll();
     }
+
 }

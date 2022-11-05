@@ -26,7 +26,7 @@ public class UserHabitsController {
 
 
     @RequestMapping(value = "/create-a-new", method = RequestMethod.POST)
-    public UserHabitsStorage saveTest(@RequestHeader(HttpHeaders.AUTHORIZATION) String tokenHeader, @RequestBody CreateUserHabitsRequest createUserHabitsRequest) {
+    public UserHabitsStorage createNewHabitsForUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String tokenHeader, @RequestBody CreateUserHabitsRequest createUserHabitsRequest) {
         String token = tokenHeader.replace("Bearer ", "");
         String userId = jwtTokenProvider.getUserIdFromJWT(token);
         return userHabitsService.createANewHabitsForUser(userId, createUserHabitsRequest);
