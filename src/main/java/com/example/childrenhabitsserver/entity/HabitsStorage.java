@@ -27,6 +27,8 @@ public class HabitsStorage {
     private String habitsName;
     private String habitsType;
     private String typeOfFinishCourse; // Loại định nghĩa hoàn thành theo % hay cột mốc
+    private String totalCourse = "0";
+    private Integer numberDateExecute;
     @ElementCollection
     private List<HabitsContent> habitsContentList;
 //    private String content;

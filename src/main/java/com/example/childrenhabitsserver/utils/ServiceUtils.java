@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ServiceUtils {
 
-    private static Object parseValue(String type, Object value) {
+    public static Object parseValue(String type, Object value) {
         Object result;
         switch (type) {
 //            case TypeOfFinishCourse.BOOLEAN:

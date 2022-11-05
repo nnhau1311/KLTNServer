@@ -18,11 +18,13 @@ public class UserHabitsContent {
     private String typeContent; //Định dạng nội dung
     private String body; //Định dạng nội dung
     private String typeOfFinishCourse; // Loại hoàn thành hạn mục này
+    private Integer numberDateExecute;
 //    private String levelComplete; // Mức độ hoàn thành dưới dạng chữ (mức độ)
 //    private Double percentComplete; // Mức độ hoàn thành phần trăm
     private String totalCourse = "0";
     private String executeCourse = "0";
     private Integer status = 0; // Mặc định 0 là chưa hoàn thành
-    private Date startTime;
-    private Date endTime;
+    private Date startDate;
+    private Date endDate;
+    private Date updateDate;
 }

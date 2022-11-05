@@ -9,10 +9,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AttendanceUserHabitsContent {
+public class AttendanceUserHabitsContentRequest {
 //    private String userId;
 //    @NotBlank(message = "ID của thói quen không được để trống")
     private String habitsId;
-    private List<String> listHabitsContentId;
+    private List<String> listHabitsContentCode;
 }
 

@@ -2,6 +2,7 @@ package com.example.childrenhabitsserver.service;
 
 import com.example.childrenhabitsserver.base.exception.ServiceException;
 import com.example.childrenhabitsserver.common.constant.ErrorCodeService;
+import com.example.childrenhabitsserver.common.constant.TypeOfFinishCourse;
 import com.example.childrenhabitsserver.common.request.habits.CreateHabitsRequest;
 import com.example.childrenhabitsserver.common.request.habits.UpdateHabitsRequest;
 import com.example.childrenhabitsserver.entity.HabitsStorage;
@@ -29,7 +30,22 @@ public class HabitsService {
 
     public HabitsStorage createANewHabits(CreateHabitsRequest createHabitsRequest){
         HabitsStorage habitsStorage = MappingUtils.mapObject(createHabitsRequest, HabitsStorage.class);
-         return habitsRepo.save(habitsStorage);
+        Integer totalDateExecute = 0;
+        for(HabitsContent habitsContent: createHabitsRequest.getHabitsContentList()) {
+            totalDateExecute += habitsContent.getNumberDateExecute();
+        }
+        switch (createHabitsRequest.getTypeOfFinishCourse()){
+            case TypeOfFinishCourse.PERIOD:
+                habitsStorage.setTotalCourse(String.valueOf(createHabitsRequest.getHabitsContentList().size()));
+                break;
+            case TypeOfFinishCourse.PERCENTAGE:
+                habitsStorage.setTotalCourse("100");
+                break;
+            default:
+                break;
+        }
+        habitsStorage.setNumberDateExecute(totalDateExecute);
+        return habitsRepo.save(habitsStorage);
     }
 
     public HabitsStorage updateAHabits(String habitsId, UpdateHabitsRequest updateHabitsRequest){
