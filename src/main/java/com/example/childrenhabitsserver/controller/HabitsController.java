@@ -1,14 +1,17 @@
 package com.example.childrenhabitsserver.controller;
 
+import com.example.childrenhabitsserver.base.response.WrapResponse;
 import com.example.childrenhabitsserver.common.request.habits.CreateHabitsRequest;
 import com.example.childrenhabitsserver.common.request.habits.UpdateHabitsRequest;
 import com.example.childrenhabitsserver.entity.HabitsStorage;
 import com.example.childrenhabitsserver.entity.TestJPA;
+import com.example.childrenhabitsserver.entity.UserHabitsStorage;
 import com.example.childrenhabitsserver.model.NotificationModel;
 import com.example.childrenhabitsserver.service.HabitsService;
 import com.example.childrenhabitsserver.service.SendEmailNotificationService;
 import com.example.childrenhabitsserver.service.TestService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,9 +37,10 @@ public class HabitsController {
         return habitsService.updateAHabits(habitsId, updateHabitsRequest);
     }
 
+    // QUERY ========================================
     @RequestMapping(value = "/get-all", method = RequestMethod.GET)
-    public List<HabitsStorage> getAllHabits(){
-        return habitsService.getAllHabits();
+    public WrapResponse<Page<HabitsStorage>> getAllHabitsActive(){
+        return WrapResponse.ok(habitsService.getAllHabits());
     }
 
 

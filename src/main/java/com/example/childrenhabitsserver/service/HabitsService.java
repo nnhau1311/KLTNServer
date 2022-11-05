@@ -10,6 +10,9 @@ import com.example.childrenhabitsserver.model.HabitsContent;
 import com.example.childrenhabitsserver.repository.HabitsRepo;
 import com.example.childrenhabitsserver.repository.TestRepo;
 import com.example.childrenhabitsserver.utils.MappingUtils;
+import com.example.childrenhabitsserver.utils.PageableUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -39,7 +42,8 @@ public class HabitsService {
         return habitsRepo.save(habitsStorage);
     }
 
-    public List<HabitsStorage> getAllHabits(){
-        return habitsRepo.findAll();
+    public Page<HabitsStorage> getAllHabits(){
+        Pageable pageable = PageableUtils.convertPageableAndSort(0, 10, new ArrayList<>());
+        return habitsRepo.findAll(pageable);
     }
 }

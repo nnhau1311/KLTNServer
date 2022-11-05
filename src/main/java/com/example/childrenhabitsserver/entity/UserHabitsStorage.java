@@ -31,6 +31,7 @@ public class UserHabitsStorage {
 //    private Double totalPercentComplete; // Mức độ hoàn thành phần trăm
     private String totalCourse;
     private String executeCourse;
+    private Integer status = 0; // Mặc định 0 là chưa hoàn thành
     private Date startDate;
     private Date endDate;
     @ElementCollection

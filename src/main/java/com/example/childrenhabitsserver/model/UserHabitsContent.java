@@ -22,6 +22,7 @@ public class UserHabitsContent {
 //    private Double percentComplete; // Mức độ hoàn thành phần trăm
     private String totalCourse = "0";
     private String executeCourse = "0";
+    private Integer status = 0; // Mặc định 0 là chưa hoàn thành
     private Date startTime;
     private Date endTime;
 }
