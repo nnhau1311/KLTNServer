@@ -157,7 +157,7 @@ public class UserHabitsService {
             case TypeOfFinishCourse.PERCENTAGE:
 //                Double percentExecuteTotal = (Double) serviceUtils.parseValue(itemHabits.getTypeOfFinishCourse(), itemHabits.getTotalCourse());
                 Double percentExecute = (countExecuteDone/itemHabits.getHabitsContents().size()) * 100;
-                String result = String.format("%.2d", percentExecute);
+                String result = String.format("%.2f", percentExecute);
                 itemHabits.setExecuteCourse(result);
                 break;
             default:
