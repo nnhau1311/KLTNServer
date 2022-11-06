@@ -26,6 +26,8 @@ public class UserHabitsStorage {
 
     private String userId;
     private String habitsId;
+    private String habitsName;
+    private String habitsType;
     private String typeOfFinishCourse; // Loại hoàn thành hạn mục này
 //    private String totalLevelComplete; // Mức độ hoàn thành dưới dạng chữ (mức độ)
 //    private Double totalPercentComplete; // Mức độ hoàn thành phần trăm
