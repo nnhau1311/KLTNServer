@@ -1,6 +1,7 @@
 package com.example.childrenhabitsserver.service;
 
 import com.example.childrenhabitsserver.base.exception.ServiceException;
+import com.example.childrenhabitsserver.base.request.BasePageRequest;
 import com.example.childrenhabitsserver.common.constant.ErrorCodeService;
 import com.example.childrenhabitsserver.common.constant.TypeOfFinishCourse;
 import com.example.childrenhabitsserver.common.constant.UserHabitsContentStatus;
@@ -172,8 +173,8 @@ public class UserHabitsService {
         return userHabitsRepo.findAll();
     }
 
-    public Page<UserHabitsStorage> getListUserHabits(String userId){
-        Pageable pageable = PageableUtils.convertPageableAndSort(0, 10, new ArrayList<>());
+    public Page<UserHabitsStorage> getListUserHabits(String userId, BasePageRequest request){
+        Pageable pageable = PageableUtils.convertPageableAndSort(request.getPageNumber(), 10, new ArrayList<>());
 
         Page<UserHabitsStorage> result = userHabitsRepo.findByUserId(userId, pageable);
         return result;

@@ -1,6 +1,7 @@
 package com.example.childrenhabitsserver.controller;
 
 import com.example.childrenhabitsserver.auth.JwtTokenProvider;
+import com.example.childrenhabitsserver.base.request.BasePageRequest;
 import com.example.childrenhabitsserver.base.response.WrapResponse;
 import com.example.childrenhabitsserver.common.request.userhabits.AttendanceUserHabitsContentRequest;
 import com.example.childrenhabitsserver.common.request.userhabits.CreateUserHabitsRequest;
@@ -49,10 +50,10 @@ public class UserHabitsController {
     }
 
     @RequestMapping(value = "/get-habits", method = RequestMethod.GET)
-    public WrapResponse<Page<UserHabitsStorage>> getUserHabits(@RequestHeader(HttpHeaders.AUTHORIZATION) String tokenHeader) {
+    public WrapResponse<Page<UserHabitsStorage>> getUserHabits(@RequestHeader(HttpHeaders.AUTHORIZATION) String tokenHeader, @RequestBody BasePageRequest basePageRequest) {
         String token = tokenHeader.replace("Bearer ", "");
         String userId = jwtTokenProvider.getUserIdFromJWT(token);
-        return WrapResponse.ok(userHabitsService.getListUserHabits(userId));
+        return WrapResponse.ok(userHabitsService.getListUserHabits(userId, basePageRequest));
     }
 
 }
