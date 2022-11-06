@@ -69,6 +69,8 @@ public class UserHabitsService {
         UserHabitsStorage userHabitsStorage = UserHabitsStorage.builder()
                 .userId(userId)
                 .habitsId(createUserHabitsRequest.getHabitsId())
+                .habitsName(habitsStorage.getHabitsName())
+                .habitsType(habitsStorage.getHabitsType())
                 .typeOfFinishCourse(habitsStorage.getTypeOfFinishCourse())
 //                .totalLevelComplete("0")
 //                .totalPercentComplete(0d)
