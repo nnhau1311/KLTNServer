@@ -49,7 +49,7 @@ public class UserHabitsController {
         return userHabitsService.getAllUserHabits();
     }
 
-    @RequestMapping(value = "/get-habits", method = RequestMethod.GET)
+    @RequestMapping(value = "/get-habits", method = RequestMethod.POST)
     public WrapResponse<Page<UserHabitsStorage>> getUserHabits(@RequestHeader(HttpHeaders.AUTHORIZATION) String tokenHeader, @RequestBody BasePageRequest basePageRequest) {
         String token = tokenHeader.replace("Bearer ", "");
         String userId = jwtTokenProvider.getUserIdFromJWT(token);
