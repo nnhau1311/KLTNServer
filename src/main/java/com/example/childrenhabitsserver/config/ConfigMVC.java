@@ -9,7 +9,7 @@ public class ConfigMVC implements WebServerFactoryCustomizer<ConfigurableServlet
 
     @Override
     public void customize(ConfigurableServletWebServerFactory container) {
-//        container.setContextPath("/Children");
+//        container.setContextPath("/children-habits");
 //        container.setPort(8083);
     }
 
