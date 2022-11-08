@@ -173,6 +173,14 @@ public class UserHabitsService {
         return userHabitsRepo.findAll();
     }
 
+    public UserHabitsStorage getUserHabitsById(String userHabitsStoreId){
+        Optional<UserHabitsStorage> optionalHabitsStorage = userHabitsRepo.findById(userHabitsStoreId);
+        if (!optionalHabitsStorage.isPresent()) {
+            throw new ServiceException(ErrorCodeService.USER_HABITS_NOT_EXITS);
+        }
+        return optionalHabitsStorage.get();
+    }
+
     public Page<UserHabitsStorage> getListUserHabits(String userId, BasePageRequest request){
         Pageable pageable = PageableUtils.convertPageableAndSort(request.getPageNumber(), 10, new ArrayList<>());
 

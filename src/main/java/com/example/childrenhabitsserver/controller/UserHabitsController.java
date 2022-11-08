@@ -49,6 +49,16 @@ public class UserHabitsController {
         return userHabitsService.getAllUserHabits();
     }
 
+    /**
+     *
+     * @param userHabitsId id của thói quen của người dùng (Không phải là habitsId - id của thói quen)
+     * @return
+     */
+    @RequestMapping(value = "/get-habits/{userHabitsId}", method = RequestMethod.GET)
+    public WrapResponse<UserHabitsStorage> getUserHabitsById(@PathVariable String userHabitsId) {
+        return WrapResponse.ok(userHabitsService.getUserHabitsById(userHabitsId));
+    }
+
     @RequestMapping(value = "/get-habits", method = RequestMethod.GET)
     public WrapResponse<Page<UserHabitsStorage>> getUserHabits(@RequestHeader(HttpHeaders.AUTHORIZATION) String tokenHeader, @RequestBody BasePageRequest basePageRequest) {
         String token = tokenHeader.replace("Bearer ", "");

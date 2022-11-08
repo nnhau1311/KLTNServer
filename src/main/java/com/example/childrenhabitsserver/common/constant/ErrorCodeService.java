@@ -13,5 +13,7 @@ public class ErrorCodeService {
     public static final String ID_HABITS_INVALID= "HABITS.ID_HABITS_INVALID";
     public static final String HABITS_NOT_EXITS= "HABITS.HABITS_NOT_EXITS";
 
+    public static final String USER_HABITS_NOT_EXITS= "USER_HABITS.USER_HABITS_NOT_EXITS";
+
     public static final String ATTENDANCE_HABITS_IN_VALID= "ATTENDANCE.ATTENDANCE_HABITS_IN_VALID";
 }
