@@ -5,6 +5,7 @@ import com.example.childrenhabitsserver.base.request.BasePageRequest;
 import com.example.childrenhabitsserver.base.response.WrapResponse;
 import com.example.childrenhabitsserver.common.request.userhabits.AttendanceUserHabitsContentRequest;
 import com.example.childrenhabitsserver.common.request.userhabits.CreateUserHabitsRequest;
+import com.example.childrenhabitsserver.common.request.userhabits.UpdateUserHabitsFullDataRequest;
 import com.example.childrenhabitsserver.entity.HabitsStorage;
 import com.example.childrenhabitsserver.entity.UserHabitsStorage;
 import com.example.childrenhabitsserver.service.UserHabitsService;
@@ -42,6 +43,22 @@ public class UserHabitsController {
         String token = tokenHeader.replace("Bearer ", "");
         String userId = jwtTokenProvider.getUserIdFromJWT(token);
         return WrapResponse.ok(userHabitsService.attendancePerHabitsContent(userId, request));
+    }
+
+    // UPDATE =============================================================
+
+    @ApiOperation(value = "Cập nhật thói quen của người dùng bằng id", notes = "Gửi lên toàn bộ thông tin, sẽ bị null data nếu thiếu bất kì field nào")
+    @RequestMapping(value = "/delete-habits/{userHabitsId}", method = RequestMethod.GET)
+    public WrapResponse<Object> deleteUserHabitsById(@RequestBody UpdateUserHabitsFullDataRequest request) {
+        return WrapResponse.ok(userHabitsService.updateUserHabits(request));
+    }
+
+    // DELETE =============================================================
+
+    @ApiOperation(value = "Xoá thói quen của người dùng bằng id", notes = "userHabitsId id của thói quen của người dùng (Không phải là habitsId - id của thói quen")
+    @RequestMapping(value = "/delete-habits/{userHabitsId}", method = RequestMethod.GET)
+    public WrapResponse<Object> deleteUserHabitsById(@PathVariable String userHabitsId) {
+        return WrapResponse.ok(userHabitsService.deleteUserHabitsId(userHabitsId));
     }
 
     // QUERY ==============================================================

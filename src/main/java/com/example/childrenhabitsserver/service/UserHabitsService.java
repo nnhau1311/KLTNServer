@@ -8,6 +8,7 @@ import com.example.childrenhabitsserver.common.constant.UserHabitsContentStatus;
 import com.example.childrenhabitsserver.common.constant.UserHabitsStatus;
 import com.example.childrenhabitsserver.common.request.userhabits.AttendanceUserHabitsContentRequest;
 import com.example.childrenhabitsserver.common.request.userhabits.CreateUserHabitsRequest;
+import com.example.childrenhabitsserver.common.request.userhabits.UpdateUserHabitsFullDataRequest;
 import com.example.childrenhabitsserver.entity.HabitsStorage;
 import com.example.childrenhabitsserver.entity.UserHabitsStorage;
 import com.example.childrenhabitsserver.model.UserHabitsContent;
@@ -166,6 +167,29 @@ public class UserHabitsService {
             default:
                 break;
         }
+    }
+
+    // UPDATE ==================================================================
+
+    public UserHabitsStorage updateUserHabits(UpdateUserHabitsFullDataRequest request){
+        Optional<UserHabitsStorage> optionalHabitsStorage = userHabitsRepo.findById(request.getId());
+        if (!optionalHabitsStorage.isPresent()) {
+            throw new ServiceException(ErrorCodeService.USER_HABITS_NOT_EXITS);
+        }
+        UserHabitsStorage userHabitsStorage = optionalHabitsStorage.get();
+        userHabitsStorage = MappingUtils.mapObject(request, UserHabitsStorage.class);
+        return userHabitsRepo.save(userHabitsStorage);
+    }
+
+    // DELETE ==================================================================
+
+    public boolean deleteUserHabitsId(String userHabitsStoreId){
+        Optional<UserHabitsStorage> optionalHabitsStorage = userHabitsRepo.findById(userHabitsStoreId);
+        if (!optionalHabitsStorage.isPresent()) {
+            throw new ServiceException(ErrorCodeService.USER_HABITS_NOT_EXITS);
+        }
+        userHabitsRepo.delete(optionalHabitsStorage.get());
+        return true;
     }
 
     // QUERY ===================================================================
