@@ -48,7 +48,7 @@ public class UserHabitsController {
     // UPDATE =============================================================
 
     @ApiOperation(value = "Cập nhật thói quen của người dùng bằng id", notes = "Gửi lên toàn bộ thông tin, sẽ bị null data nếu thiếu bất kì field nào")
-    @RequestMapping(value = "/delete-habits/{userHabitsId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/update-habits", method = RequestMethod.GET)
     public WrapResponse<Object> deleteUserHabitsById(@RequestBody UpdateUserHabitsFullDataRequest request) {
         return WrapResponse.ok(userHabitsService.updateUserHabits(request));
     }
