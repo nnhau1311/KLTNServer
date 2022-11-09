@@ -8,6 +8,7 @@ import com.example.childrenhabitsserver.common.request.userhabits.CreateUserHabi
 import com.example.childrenhabitsserver.entity.HabitsStorage;
 import com.example.childrenhabitsserver.entity.UserHabitsStorage;
 import com.example.childrenhabitsserver.service.UserHabitsService;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
@@ -54,6 +55,7 @@ public class UserHabitsController {
      * @param userHabitsId id của thói quen của người dùng (Không phải là habitsId - id của thói quen)
      * @return
      */
+    @ApiOperation(value = "Lấy thói quen của người dùng bằng id", notes = "userHabitsId id của thói quen của người dùng (Không phải là habitsId - id của thói quen")
     @RequestMapping(value = "/get-habits/{userHabitsId}", method = RequestMethod.GET)
     public WrapResponse<UserHabitsStorage> getUserHabitsById(@PathVariable String userHabitsId) {
         return WrapResponse.ok(userHabitsService.getUserHabitsById(userHabitsId));
