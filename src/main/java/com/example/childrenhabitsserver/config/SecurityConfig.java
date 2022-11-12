@@ -2,9 +2,9 @@ package com.example.childrenhabitsserver.config;
 
 import com.example.childrenhabitsserver.auth.JwtAuthenticationFilter;
 import com.example.childrenhabitsserver.auth.JwtTokenProvider;
+import com.example.childrenhabitsserver.service.UserCustomService;
 import com.example.childrenhabitsserver.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +18,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration

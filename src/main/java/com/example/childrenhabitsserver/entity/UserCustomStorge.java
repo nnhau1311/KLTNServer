@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.User;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.Date;
 
 @Entity
 @Table(name = "userCustom")
@@ -30,6 +31,7 @@ public class UserCustomStorge {
     @Column(name = "userPasswordCustom")
     private String password;
     private Integer status;
+    private Date expirationJWTDate;
     private String role;
     private String email;
     private String userFullName; // tên người dùng

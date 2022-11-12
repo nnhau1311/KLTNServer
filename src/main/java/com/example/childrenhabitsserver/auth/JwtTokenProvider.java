@@ -1,8 +1,12 @@
 package com.example.childrenhabitsserver.auth;
 
 import com.example.childrenhabitsserver.entity.CustomUserDetails;
+import com.example.childrenhabitsserver.entity.UserCustomStorge;
+import com.example.childrenhabitsserver.model.JWTTokenModelResponse;
+import com.example.childrenhabitsserver.service.UserCustomService;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Calendar;
@@ -11,6 +15,8 @@ import java.util.Date;
 @Component
 @Slf4j
 public class JwtTokenProvider {
+
+
     // Đoạn JWT_SECRET này là bí mật, chỉ có phía server biết
     private final String JWT_SECRET = "doubleh";
 
@@ -19,20 +25,28 @@ public class JwtTokenProvider {
     private final int JWT_EXPIRATION_HOUR = 1;
 
     // Tạo ra jwt từ thông tin user
-    public String generateToken(CustomUserDetails userDetails) {
+    public JWTTokenModelResponse generateToken(CustomUserDetails userDetails) {
         Date now = new Date();
 
         Calendar c = Calendar.getInstance();
         c.setTime(now);
         c.add(Calendar.HOUR, JWT_EXPIRATION_HOUR);
         Date expiryDate = c.getTime();
+
+
         // Tạo chuỗi json web token từ id của user.
-        return Jwts.builder()
+        String jwtToken = Jwts.builder()
                 .setSubject(userDetails.getUser().getId())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS256, JWT_SECRET)
                 .compact();
+        JWTTokenModelResponse jwtTokenModelResponse = JWTTokenModelResponse.builder()
+                .jwtToken(jwtToken)
+                .userId(userDetails.getUser().getId())
+                .expirationJWTDate(expiryDate)
+                .build();
+        return jwtTokenModelResponse;
     }
 
     // Lấy thông tin user từ jwt

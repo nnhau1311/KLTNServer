@@ -1,5 +1,6 @@
 package com.example.childrenhabitsserver.entity;
 
+import com.example.childrenhabitsserver.common.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -31,12 +33,19 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        Date currentDate = new Date();
+        if (user.getExpirationJWTDate() != null && user.getExpirationJWTDate().before(currentDate)){
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        if (user.getStatus().equals(UserStatus.ACTIVE)){
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -46,6 +55,9 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        if (user.getStatus().equals(UserStatus.ACTIVE)){
+            return true;
+        }
+        return false;
     }
 }

@@ -1,6 +1,5 @@
 package com.example.childrenhabitsserver.service;
 
-import com.example.childrenhabitsserver.auth.JwtTokenProvider;
 import com.example.childrenhabitsserver.base.exception.ServiceException;
 import com.example.childrenhabitsserver.common.HostAddress;
 import com.example.childrenhabitsserver.common.UserStatus;
@@ -27,14 +26,12 @@ public class UserCustomService {
     private final PasswordEncoder passwordEncoder;
     private final SendEmailNotificationService sendEmailNotificationService;
     private final RandomUtils randomUtils;
-    private final JwtTokenProvider JwtTokenProvider;
 
-    public UserCustomService(UserRepository userRepository, PasswordEncoder passwordEncoder, SendEmailNotificationService sendEmailNotificationService, RandomUtils randomUtils, com.example.childrenhabitsserver.auth.JwtTokenProvider jwtTokenProvider) {
+    public UserCustomService(UserRepository userRepository, PasswordEncoder passwordEncoder, SendEmailNotificationService sendEmailNotificationService, RandomUtils randomUtils) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.sendEmailNotificationService = sendEmailNotificationService;
         this.randomUtils = randomUtils;
-        JwtTokenProvider = jwtTokenProvider;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -188,6 +185,13 @@ public class UserCustomService {
                 .build();
         sendEmailNotificationService.sendEmail(notificationModel);
         return userRepository.save(user);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public UserCustomStorge updateExpirationJWTDate(String userId, Date expirationJWTDate){
+        UserCustomStorge userCustomStorge = findById(userId);
+        userCustomStorge.setExpirationJWTDate(expirationJWTDate);
+        return userRepository.save(userCustomStorge);
     }
 
     // Query Data ====================================================
