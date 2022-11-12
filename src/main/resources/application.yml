@@ -1,3 +1,6 @@
-#spring:
-#  application:
-#    name: children-habits
+spring:
+  rabbitmq:
+    host: 171.240.159.162
+    port: 5672
+    username: guest
+    password: guest
