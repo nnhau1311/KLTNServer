@@ -73,4 +73,10 @@ public class UserController {
         return WrapResponse.ok(customUserDetailsService.findById(userId));
     }
 
+    @RequestMapping(value = "/me", method = RequestMethod.GET)
+    public WrapResponse<Object> getUserInfor(@RequestHeader(HttpHeaders.AUTHORIZATION) String tokenHeader) {
+        String token = tokenHeader.replace("Bearer ", "");
+        String userId = jwtTokenProvider.getUserIdFromJWT(token);
+        return WrapResponse.ok(customUserDetailsService.findById(userId));
+    }
 }
