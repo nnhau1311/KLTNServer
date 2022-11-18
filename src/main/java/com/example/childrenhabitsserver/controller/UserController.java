@@ -67,6 +67,13 @@ public class UserController {
         return WrapResponse.ok(customUserDetailsService.resetPassword(userId));
     }
 
+    @RequestMapping(value = "/disable/{userId}", method = RequestMethod.GET)
+    public WrapResponse<Object> disableUser(@PathVariable String userId) {
+        // Đường linh xác nhân reset mật khẩu
+        log.info("disable userId {}", userId);
+        return WrapResponse.ok(customUserDetailsService.disableUser(userId));
+    }
+
     // QUERY ====================================================
     @RequestMapping(value = "/find-by-id/{userId}", method = RequestMethod.GET)
     public WrapResponse<Object> findById(@PathVariable String userId) {

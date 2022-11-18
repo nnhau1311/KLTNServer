@@ -44,6 +44,8 @@ public class UserCustomService {
                 .role(createNewUserRequest.getRole())
                 .userFullName(createNewUserRequest.getUserFullName())
                 .status(UserStatus.ACTIVE)
+                .createDate(new Date())
+                .updateDate(new Date())
                 .build();
         Map<String, Object> scopes = new HashMap<>();
         scopes.put("userFullName", createNewUserRequest.getUserFullName());
@@ -73,6 +75,8 @@ public class UserCustomService {
                 .role(createNewUserRequest.getRole())
                 .userFullName(createNewUserRequest.getUserFullName())
                 .status(UserStatus.DISABLE)
+                .createDate(new Date())
+                .updateDate(new Date())
                 .build();
         UserCustomStorge userCustomStorgeDBNew = userRepository.save(userCustomStorge);
         String apiConfirmCreateUser = String.format("http://%s%s%s", HostAddress.serverAddress, "/user/confirm-create-new/", userCustomStorgeDBNew.getId());
@@ -104,6 +108,7 @@ public class UserCustomService {
         }
         UserCustomStorge user = userCustomStorgeOptional.get();
         user.setStatus(UserStatus.ACTIVE);
+        user.setUpdateDate(new Date());
         return userRepository.save(user);
     }
 
@@ -125,6 +130,7 @@ public class UserCustomService {
             log.info("New pass: {}", request.getNewPassword());
             String passBCrypt = passwordEncoder.encode(request.getNewPassword());
             user.setPassword(passBCrypt);
+            user.setUpdateDate(new Date());
         }
         return userRepository.save(user);
     }
@@ -171,6 +177,7 @@ public class UserCustomService {
         log.info("New pass: {}", randomResetPassword);
         String passBCrypt = passwordEncoder.encode(randomResetPassword);
         user.setPassword(passBCrypt);
+        user.setUpdateDate(new Date());
 
         // Gửi email
         Map<String, Object> scopes = new HashMap<>();
@@ -191,6 +198,15 @@ public class UserCustomService {
     public UserCustomStorge updateExpirationJWTDate(String userId, Date expirationJWTDate){
         UserCustomStorge userCustomStorge = findById(userId);
         userCustomStorge.setExpirationJWTDate(expirationJWTDate);
+        userCustomStorge.setUpdateDate(new Date());
+        return userRepository.save(userCustomStorge);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public UserCustomStorge disableUser(String userId){
+        UserCustomStorge userCustomStorge = findById(userId);
+        userCustomStorge.setUpdateDate(new Date());
+        userCustomStorge.setStatus(UserStatus.DISABLE);
         return userRepository.save(userCustomStorge);
     }
 
