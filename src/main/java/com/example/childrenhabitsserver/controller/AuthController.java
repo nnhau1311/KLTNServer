@@ -1,13 +1,11 @@
 package com.example.childrenhabitsserver.controller;
 
 import com.example.childrenhabitsserver.auth.JwtTokenProvider;
-import com.example.childrenhabitsserver.base.exception.AccessDeniedException;
 import com.example.childrenhabitsserver.base.response.WrapResponse;
-import com.example.childrenhabitsserver.common.UserStatus;
 import com.example.childrenhabitsserver.common.request.LoginRequest;
 import com.example.childrenhabitsserver.common.response.LoginResponse;
 import com.example.childrenhabitsserver.entity.CustomUserDetails;
-import com.example.childrenhabitsserver.entity.UserCustomStorge;
+import com.example.childrenhabitsserver.entity.UserCustomStorage;
 import com.example.childrenhabitsserver.model.JWTTokenModelResponse;
 import com.example.childrenhabitsserver.service.UserCustomService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
@@ -60,7 +57,7 @@ public class AuthController {
         // Trả về jwt model cho người dùng.
         JWTTokenModelResponse jwtTokenModelResponse = tokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal());
 
-        UserCustomStorge user = userCustomService.updateExpirationJWTDate(jwtTokenModelResponse.getUserId(), jwtTokenModelResponse.getExpirationJWTDate());
+        UserCustomStorage user = userCustomService.updateExpirationJWTDate(jwtTokenModelResponse.getUserId(), jwtTokenModelResponse.getExpirationJWTDate());
 //        return new LoginResponse(jwt,"Bearer");
         return WrapResponse.ok(new LoginResponse(jwtTokenModelResponse.getJwtToken(), "Bearer"));
     }

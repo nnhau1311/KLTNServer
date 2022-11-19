@@ -1,13 +1,13 @@
 package com.example.childrenhabitsserver.repository;
 
-import com.example.childrenhabitsserver.entity.UserCustomStorge;
+import com.example.childrenhabitsserver.entity.UserCustomStorage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends JpaRepository<UserCustomStorge, String> {
-    UserCustomStorge findByUsername(String username);
-    UserCustomStorge findByEmail(String email);
-    UserCustomStorge findByUsernameOrEmail(String username, String email);
-    UserCustomStorge findByUsernameOrEmailAndStatusIs(String username, String email, Integer status);
+public interface UserRepository extends JpaRepository<UserCustomStorage, String> {
+    UserCustomStorage findByUsername(String username);
+    UserCustomStorage findByEmail(String email);
+    UserCustomStorage findByUsernameOrEmail(String username, String email);
+    UserCustomStorage findByUsernameOrEmailAndStatusIs(String username, String email, Integer status);
 }

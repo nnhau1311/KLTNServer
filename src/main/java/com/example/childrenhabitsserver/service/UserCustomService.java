@@ -7,7 +7,7 @@ import com.example.childrenhabitsserver.common.constant.ErrorCodeService;
 import com.example.childrenhabitsserver.common.request.user.ChangePasswordUserRequest;
 import com.example.childrenhabitsserver.common.request.user.CreateNewUserRequest;
 import com.example.childrenhabitsserver.common.request.user.ResetPasswordUserRequest;
-import com.example.childrenhabitsserver.entity.UserCustomStorge;
+import com.example.childrenhabitsserver.entity.UserCustomStorage;
 import com.example.childrenhabitsserver.model.NotificationModel;
 import com.example.childrenhabitsserver.repository.UserRepository;
 import com.example.childrenhabitsserver.utils.DateTimeUtils;
@@ -36,9 +36,9 @@ public class UserCustomService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public UserCustomStorge createANewUser(CreateNewUserRequest createNewUserRequest){
+    public UserCustomStorage createANewUser(CreateNewUserRequest createNewUserRequest){
         String passBCrypt = passwordEncoder.encode(createNewUserRequest.getUserPassword());
-        UserCustomStorge userCustomStorge = UserCustomStorge.builder()
+        UserCustomStorage userCustomStorage = UserCustomStorage.builder()
                 .username(createNewUserRequest.getUserName())
                 .password(passBCrypt)
                 .email(createNewUserRequest.getEmail())
@@ -49,6 +49,7 @@ public class UserCustomService {
                 .createDate(new Date())
                 .updateDate(new Date())
                 .build();
+        UserCustomStorage userCustomStorageDBNew = userRepository.save(userCustomStorage);
         Map<String, Object> scopes = new HashMap<>();
         scopes.put("userFullName", createNewUserRequest.getUserFullName());
         scopes.put("userName", createNewUserRequest.getUserName());
@@ -59,18 +60,18 @@ public class UserCustomService {
                 .subject("Thông báo tạo tài khoản thành công")
                 .build();
         sendEmailNotificationService.sendEmail(notificationModel);
-        return userRepository.save(userCustomStorge);
+        return userCustomStorageDBNew;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public UserCustomStorge signUpANewUser(CreateNewUserRequest createNewUserRequest){
-        UserCustomStorge userCustomStorgeDB = userRepository.findByUsernameOrEmail(createNewUserRequest.getUserName(), createNewUserRequest.getEmail());
-        if (userCustomStorgeDB != null && userCustomStorgeDB.getStatus() == UserStatus.ACTIVE) {
-            log.error("Tìm thấy người dùng đã tồn tại: {} {}", userCustomStorgeDB.getUsername(), userCustomStorgeDB.getEmail());
+    public UserCustomStorage signUpANewUser(CreateNewUserRequest createNewUserRequest){
+        UserCustomStorage userCustomStorageDB = userRepository.findByUsernameOrEmail(createNewUserRequest.getUserName(), createNewUserRequest.getEmail());
+        if (userCustomStorageDB != null && userCustomStorageDB.getStatus() == UserStatus.ACTIVE) {
+            log.error("Tìm thấy người dùng đã tồn tại: {} {}", userCustomStorageDB.getUsername(), userCustomStorageDB.getEmail());
             throw new ServiceException(ErrorCodeService.USER_HAD_EXITS);
         }
         String passBCrypt = passwordEncoder.encode(createNewUserRequest.getUserPassword());
-        UserCustomStorge userCustomStorge = UserCustomStorge.builder()
+        UserCustomStorage userCustomStorage = UserCustomStorage.builder()
                 .username(createNewUserRequest.getUserName())
                 .password(passBCrypt)
                 .email(createNewUserRequest.getEmail())
@@ -81,8 +82,8 @@ public class UserCustomService {
                 .createDate(new Date())
                 .updateDate(new Date())
                 .build();
-        UserCustomStorge userCustomStorgeDBNew = userRepository.save(userCustomStorge);
-        String apiConfirmCreateUser = String.format("http://%s%s%s", HostAddress.serverAddress, "/user/confirm-create-new/", userCustomStorgeDBNew.getId());
+        UserCustomStorage userCustomStorageDBNew = userRepository.save(userCustomStorage);
+        String apiConfirmCreateUser = String.format("http://%s%s%s", HostAddress.serverAddress, "/user/confirm-create-new/", userCustomStorageDBNew.getId());
         log.info("apiConfirmCreateUser {}", apiConfirmCreateUser);
         Map<String, Object> scopes = new HashMap<>();
         scopes.put("userFullName", createNewUserRequest.getUserFullName());
@@ -95,39 +96,39 @@ public class UserCustomService {
                 .subject("Xác nhận tạo tài khoản")
                 .build();
         sendEmailNotificationService.sendEmail(notificationModel);
-        return userCustomStorgeDBNew;
+        return userCustomStorageDBNew;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public UserCustomStorge confirmCreateNewUser(String userId){
+    public UserCustomStorage confirmCreateNewUser(String userId){
         if (StringUtils.isBlank(userId)) {
             log.error("User ID không hợp lệ:" + userId);
             throw new ServiceException(ErrorCodeService.USER_ID_NOT_VALID);
         }
-        Optional<UserCustomStorge> userCustomStorgeOptional = userRepository.findById(userId);
-        if (!userCustomStorgeOptional.isPresent()) {
+        Optional<UserCustomStorage> userCustomStorageOptional = userRepository.findById(userId);
+        if (!userCustomStorageOptional.isPresent()) {
             log.error("Không tìm thấy người dùng:" + userId);
             throw new ServiceException(ErrorCodeService.USER_HAD_NOT_EXITS);
         }
-        UserCustomStorge user = userCustomStorgeOptional.get();
+        UserCustomStorage user = userCustomStorageOptional.get();
         user.setStatus(UserStatus.ACTIVE);
         user.setUpdateDate(new Date());
         return userRepository.save(user);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public UserCustomStorge changePassword(String userId, ChangePasswordUserRequest request){
+    public UserCustomStorage changePassword(String userId, ChangePasswordUserRequest request){
 
         if (StringUtils.isBlank(userId)) {
             log.error("User ID không hợp lệ:" + userId);
             throw new ServiceException(ErrorCodeService.USER_ID_NOT_VALID);
         }
-        Optional<UserCustomStorge> userCustomStorgeOptional = userRepository.findById(userId);
-        if (!userCustomStorgeOptional.isPresent()) {
+        Optional<UserCustomStorage> UserCustomStorageOptional = userRepository.findById(userId);
+        if (!UserCustomStorageOptional.isPresent()) {
             log.error("Không tìm thấy người dùng:" + userId);
             throw new ServiceException(ErrorCodeService.USER_HAD_NOT_EXITS);
         }
-        UserCustomStorge user = userCustomStorgeOptional.get();
+        UserCustomStorage user = UserCustomStorageOptional.get();
         Boolean isMatchPassword = passwordEncoder.matches(request.getOldPassword(), user.getPassword());
         if (isMatchPassword) {
             log.info("New pass: {}", request.getNewPassword());
@@ -144,7 +145,7 @@ public class UserCustomService {
             throw new ServiceException(ErrorCodeService.REQUEST_RESET_PASSWORD_INVALID);
         }
         // Kiểm tra xem user có tồn tại trong database không?
-        UserCustomStorge user = userRepository.findByUsernameOrEmail(request.getUserInfor(), request.getUserInfor());
+        UserCustomStorage user = userRepository.findByUsernameOrEmail(request.getUserInfor(), request.getUserInfor());
         if (user == null) {
             log.error("Không tìm thấy người dùng:" + request.getUserInfor());
             throw new ServiceException(ErrorCodeService.USER_HAD_NOT_EXITS);
@@ -165,17 +166,17 @@ public class UserCustomService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public UserCustomStorge resetPassword(String userId){
+    public UserCustomStorage resetPassword(String userId){
         if (StringUtils.isBlank(userId)) {
             log.error("User ID không hợp lệ:" + userId);
             throw new ServiceException(ErrorCodeService.REQUEST_RESET_PASSWORD_INVALID);
         }
-        Optional<UserCustomStorge> userCustomStorgeOptional = userRepository.findById(userId);
-        if (!userCustomStorgeOptional.isPresent()) {
+        Optional<UserCustomStorage> UserCustomStorageOptional = userRepository.findById(userId);
+        if (!UserCustomStorageOptional.isPresent()) {
             log.error("Không tìm thấy người dùng:" + userId);
             throw new ServiceException(ErrorCodeService.USER_HAD_NOT_EXITS);
         }
-        UserCustomStorge user = userCustomStorgeOptional.get();
+        UserCustomStorage user = UserCustomStorageOptional.get();
         String randomResetPassword = randomUtils.randomArrayStringWithOnlyLetter();
         log.info("New pass: {}", randomResetPassword);
         String passBCrypt = passwordEncoder.encode(randomResetPassword);
@@ -198,30 +199,30 @@ public class UserCustomService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public UserCustomStorge updateExpirationJWTDate(String userId, Date expirationJWTDate){
-        UserCustomStorge userCustomStorge = findById(userId);
-        userCustomStorge.setExpirationJWTDate(expirationJWTDate);
-        userCustomStorge.setUpdateDate(new Date());
-        return userRepository.save(userCustomStorge);
+    public UserCustomStorage updateExpirationJWTDate(String userId, Date expirationJWTDate){
+        UserCustomStorage userCustomStorage = findById(userId);
+        userCustomStorage.setExpirationJWTDate(expirationJWTDate);
+        userCustomStorage.setUpdateDate(new Date());
+        return userRepository.save(userCustomStorage);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public UserCustomStorge disableUser(String userId){
-        UserCustomStorge userCustomStorge = findById(userId);
-        userCustomStorge.setUpdateDate(new Date());
-        userCustomStorge.setStatus(UserStatus.DISABLE);
-        return userRepository.save(userCustomStorge);
+    public UserCustomStorage disableUser(String userId){
+        UserCustomStorage userCustomStorage = findById(userId);
+        userCustomStorage.setUpdateDate(new Date());
+        userCustomStorage.setStatus(UserStatus.DISABLE);
+        return userRepository.save(userCustomStorage);
     }
 
     // Query Data ====================================================
 
-    public UserCustomStorge findById(String userId) {
-        Optional<UserCustomStorge> userCustomStorgeOptional = userRepository.findById(userId);
-        if (!userCustomStorgeOptional.isPresent()) {
+    public UserCustomStorage findById(String userId) {
+        Optional<UserCustomStorage> userCustomStorageOptional = userRepository.findById(userId);
+        if (!userCustomStorageOptional.isPresent()) {
             log.error("Không tìm thấy người dùng:" + userId);
             throw new ServiceException(ErrorCodeService.USER_HAD_NOT_EXITS);
         }
-        UserCustomStorge user = userCustomStorgeOptional.get();
+        UserCustomStorage user = userCustomStorageOptional.get();
         return user;
     }
 }

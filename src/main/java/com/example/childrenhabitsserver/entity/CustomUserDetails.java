@@ -16,7 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Slf4j
 public class CustomUserDetails implements UserDetails {
-    private UserCustomStorge user;
+    private UserCustomStorage user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

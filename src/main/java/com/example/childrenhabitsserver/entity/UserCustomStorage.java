@@ -17,7 +17,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @ToString
-public class UserCustomStorge {
+public class UserCustomStorage {
 
     @Id
     @GeneratedValue(generator="system-uuid")

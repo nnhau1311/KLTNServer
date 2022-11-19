@@ -1,12 +1,9 @@
 package com.example.childrenhabitsserver.auth;
 
 import com.example.childrenhabitsserver.entity.CustomUserDetails;
-import com.example.childrenhabitsserver.entity.UserCustomStorge;
 import com.example.childrenhabitsserver.model.JWTTokenModelResponse;
-import com.example.childrenhabitsserver.service.UserCustomService;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Calendar;
