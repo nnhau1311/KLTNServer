@@ -1,6 +1,7 @@
 package com.example.childrenhabitsserver.entity;
 
 import com.example.childrenhabitsserver.model.HabitsContent;
+import com.example.childrenhabitsserver.model.UserHabitsAttendanceProcess;
 import com.example.childrenhabitsserver.model.UserHabitsContent;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -8,6 +9,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "user_habits")
@@ -38,7 +40,11 @@ public class UserHabitsStorage {
     private Date endDate;
     private Date createDate;
     private Date updateDate;
+
     @ElementCollection
+    private List<UserHabitsAttendanceProcess> attendanceProcess;
+//    @ElementCollection
+    @OneToMany
     private List<UserHabitsContent> habitsContents;
 
 }

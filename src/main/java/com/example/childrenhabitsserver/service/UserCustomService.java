@@ -10,6 +10,7 @@ import com.example.childrenhabitsserver.common.request.user.ResetPasswordUserReq
 import com.example.childrenhabitsserver.entity.UserCustomStorge;
 import com.example.childrenhabitsserver.model.NotificationModel;
 import com.example.childrenhabitsserver.repository.UserRepository;
+import com.example.childrenhabitsserver.utils.DateTimeUtils;
 import com.example.childrenhabitsserver.utils.RandomUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +45,7 @@ public class UserCustomService {
                 .role(createNewUserRequest.getRole())
                 .userFullName(createNewUserRequest.getUserFullName())
                 .status(UserStatus.ACTIVE)
+                .expirationJWTDate(DateTimeUtils.addDate(new Date(), 12))
                 .createDate(new Date())
                 .updateDate(new Date())
                 .build();
@@ -75,6 +77,7 @@ public class UserCustomService {
                 .role(createNewUserRequest.getRole())
                 .userFullName(createNewUserRequest.getUserFullName())
                 .status(UserStatus.DISABLE)
+                .expirationJWTDate(new Date())
                 .createDate(new Date())
                 .updateDate(new Date())
                 .build();

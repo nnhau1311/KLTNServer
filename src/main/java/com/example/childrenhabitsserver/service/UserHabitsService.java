@@ -11,6 +11,7 @@ import com.example.childrenhabitsserver.common.request.userhabits.CreateUserHabi
 import com.example.childrenhabitsserver.common.request.userhabits.UpdateUserHabitsFullDataRequest;
 import com.example.childrenhabitsserver.entity.HabitsStorage;
 import com.example.childrenhabitsserver.entity.UserHabitsStorage;
+import com.example.childrenhabitsserver.model.UserHabitsAttendanceProcess;
 import com.example.childrenhabitsserver.model.UserHabitsContent;
 import com.example.childrenhabitsserver.repository.HabitsRepo;
 import com.example.childrenhabitsserver.repository.UserHabitsRepo;
@@ -23,10 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserHabitsService {
@@ -66,8 +64,28 @@ public class UserHabitsService {
             itemContent.setStartDate(startDateContent);
             itemContent.setEndDate(endDateContent);
             itemContent.setUpdateDate(new Date());
+            List<UserHabitsAttendanceProcess> attendanceProcess = new ArrayList<>();
+            for (int i = 0; i < itemContent.getNumberDateExecute(); i ++) {
+                String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
+                UserHabitsAttendanceProcess userHabitsAttendanceProcess = UserHabitsAttendanceProcess.builder()
+                        .dateAttendanceExpect(currentDateStr)
+                        .hasAttendanceExpectDate(false)
+                        .build();
+                attendanceProcess.add(userHabitsAttendanceProcess);
+            }
+            itemContent.setAttendanceProcess(attendanceProcess);
         }
         Date endDate = DateTimeUtils.addDate(createUserHabitsRequest.getDateStart(), habitsStorage.getNumberDateExecute());
+        List<UserHabitsAttendanceProcess> attendanceProcess = new ArrayList<>();
+        for (int i = 0; i < habitsStorage.getNumberDateExecute(); i ++) {
+            String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
+            UserHabitsAttendanceProcess userHabitsAttendanceProcess = UserHabitsAttendanceProcess.builder()
+                    .dateAttendanceExpect(currentDateStr)
+                    .hasAttendanceExpectDate(false)
+                    .build();
+            attendanceProcess.add(userHabitsAttendanceProcess);
+        }
+
         UserHabitsStorage userHabitsStorage = UserHabitsStorage.builder()
                 .userId(userId)
                 .habitsId(createUserHabitsRequest.getHabitsId())
@@ -84,6 +102,7 @@ public class UserHabitsService {
                 .endDate(endDate)
                 .updateDate(new Date())
                 .createDate(new Date())
+                .attendanceProcess(attendanceProcess)
                 .build();
         return userHabitsRepo.save(userHabitsStorage);
     }

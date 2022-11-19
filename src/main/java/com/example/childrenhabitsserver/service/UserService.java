@@ -28,13 +28,16 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String userInfor) throws UsernameNotFoundException {
         // Kiểm tra xem user có tồn tại trong database không?
         UserCustomStorge user = userRepository.findByUsernameOrEmail(userInfor, userInfor);
-        log.info("user: {}", user.toString());
-        if (user == null || user.getStatus() != UserStatus.ACTIVE) {
-            log.error("Not found user with username:" + userInfor);
-            log.error("User status:" + user.getStatus());
-//            throw new UsernameNotFoundException(userInfor);
+        if (user == null) {
+            log.error("User null");
             throw new AccessDeniedException(ErrorCodeService.LOGIN_INVALID);
         }
+        if (user.getStatus() != UserStatus.ACTIVE) {
+            log.error("Not found user with username:" + userInfor);
+            log.error("User status:" + user.getStatus());
+            throw new AccessDeniedException(ErrorCodeService.LOGIN_INVALID);
+        }
+        log.info("user: {}", user.toString());
         return new CustomUserDetails(user);
     }
 
