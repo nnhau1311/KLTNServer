@@ -3,6 +3,7 @@ package com.example.childrenhabitsserver.entity;
 import com.example.childrenhabitsserver.common.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,6 +14,7 @@ import java.util.Date;
 
 @Data
 @AllArgsConstructor
+@Slf4j
 public class CustomUserDetails implements UserDetails {
     private UserCustomStorge user;
 
@@ -53,13 +55,16 @@ public class CustomUserDetails implements UserDetails {
     public boolean isCredentialsNonExpired() {
         Date currentDate = new Date();
         if (user.getExpirationJWTDate() == null) {
-            return true;
+            log.info("ExpirationJWTDate {}", user.getExpirationJWTDate());
+            return false;
         }
         if (user.getExpirationJWTDate().before(currentDate)){
-            return true;
+            log.info("ExpirationJWTDate {}", user.getExpirationJWTDate());
+            log.info("currentDate {}", currentDate);
+            return false;
         }
 
-        return false;
+        return true;
     }
 
     @Override
