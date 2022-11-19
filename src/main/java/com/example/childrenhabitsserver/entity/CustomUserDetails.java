@@ -33,11 +33,12 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        Date currentDate = new Date();
-        if (user.getExpirationJWTDate() != null && user.getExpirationJWTDate().before(currentDate)){
-            return true;
-        }
-        return false;
+//        Date currentDate = new Date();
+//        if (user.getExpirationJWTDate() != null && user.getExpirationJWTDate().before(currentDate)){
+//            return true;
+//        }
+//        return false;
+        return true;
     }
 
     @Override
@@ -50,7 +51,15 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        Date currentDate = new Date();
+        if (user.getExpirationJWTDate() == null) {
+            return true;
+        }
+        if (user.getExpirationJWTDate().before(currentDate)){
+            return true;
+        }
+
+        return false;
     }
 
     @Override
