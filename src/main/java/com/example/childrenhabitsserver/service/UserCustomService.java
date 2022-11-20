@@ -220,12 +220,19 @@ public class UserCustomService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    public UserCustomStorage activeUser(String userId){
+        UserCustomStorage userCustomStorage = findById(userId);
+        userCustomStorage.setUpdateDate(new Date());
+        userCustomStorage.setStatus(UserStatus.ACTIVE);
+        return userRepository.save(userCustomStorage);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public UserCustomStorage updateUserInfor(String userId, UpdateUserInforRequest updateUserInforRequest){
         UserCustomStorage userCustomStorage = findById(userId);
         userCustomStorage.setUserFullName(updateUserInforRequest.getUserFullName());
         userCustomStorage.setUserAddress(updateUserInforRequest.getUserAddress());
         userCustomStorage.setUserNumberPhone(updateUserInforRequest.getUserNumberPhone());
-        userCustomStorage.setStatus(UserStatus.DISABLE);
         return userRepository.save(userCustomStorage);
     }
 

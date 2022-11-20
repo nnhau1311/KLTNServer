@@ -75,6 +75,12 @@ public class UserController {
         return WrapResponse.ok(customUserDetailsService.disableUser(userId));
     }
 
+    @RequestMapping(value = "/active/{userId}", method = RequestMethod.GET)
+    public WrapResponse<Object> activeUser(@PathVariable String userId) {
+        log.info("disable userId {}", userId);
+        return WrapResponse.ok(customUserDetailsService.activeUser(userId));
+    }
+
     @ApiOperation(value = "Cập nhật thông tin cá nhân của người dùng", notes = "Truyền id qua path")
     @RequestMapping(value = "/update-infor", method = RequestMethod.POST)
     public WrapResponse<Object> updateInfor(@RequestHeader(HttpHeaders.AUTHORIZATION) String tokenHeader, @RequestBody UpdateUserInforRequest request) {
