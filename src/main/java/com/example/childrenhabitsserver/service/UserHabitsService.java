@@ -207,7 +207,10 @@ public class UserHabitsService {
         if (!optionalHabitsStorage.isPresent()) {
             throw new ServiceException(ErrorCodeService.USER_HABITS_NOT_EXITS);
         }
-        userHabitsRepo.delete(optionalHabitsStorage.get());
+        UserHabitsStorage userHabitsStorage = optionalHabitsStorage.get();
+        userHabitsStorage.setStatus(UserHabitsStatus.DISABLE);
+        userHabitsRepo.save(userHabitsStorage);
+//        userHabitsRepo.delete(optionalHabitsStorage.get());
         return true;
     }
 
