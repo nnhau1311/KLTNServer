@@ -76,8 +76,17 @@ public class UserController {
     }
 
     @ApiOperation(value = "Cập nhật thông tin cá nhân của người dùng", notes = "Truyền id qua path")
+    @RequestMapping(value = "/update-infor", method = RequestMethod.GET)
+    public WrapResponse<Object> updateInfor(@RequestHeader(HttpHeaders.AUTHORIZATION) String tokenHeader, @RequestBody UpdateUserInforRequest request) {
+        String token = tokenHeader.replace("Bearer ", "");
+        String userId = jwtTokenProvider.getUserIdFromJWT(token);
+        log.info("update userId {}", userId);
+        return WrapResponse.ok(customUserDetailsService.updateUserInfor(userId, request));
+    }
+
+    @ApiOperation(value = "Cập nhật thông tin cá nhân của người dùng", notes = "Truyền id qua path")
     @RequestMapping(value = "/update-infor/{userId}", method = RequestMethod.GET)
-    public WrapResponse<Object> updateInfor(@PathVariable String userId, @RequestBody UpdateUserInforRequest request) {
+    public WrapResponse<Object> updateInforWithUserId(@PathVariable String userId, @RequestBody UpdateUserInforRequest request) {
         log.info("update userId {}", userId);
         return WrapResponse.ok(customUserDetailsService.updateUserInfor(userId, request));
     }
