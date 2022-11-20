@@ -108,8 +108,26 @@ public class UserHabitsService {
             if (itemHabits.getHabitsId().equals(request.getHabitsId())) {
                 for(UserHabitsContent itemUserHabitsContent: itemHabits.getHabitsContents()) {
                     updateUserHabitsContent(itemUserHabitsContent, request);
+                    itemUserHabitsContent.setUpdateDate(new Date());
+                    Map<String, Boolean> attendanceProcess = itemUserHabitsContent.getAttendanceProcess();
+                    String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
+                    if (attendanceProcess.containsKey(currentDateStr)) {
+                        attendanceProcess.put(currentDateStr, true);
+                    } else {
+                        throw new ServiceException(ErrorCodeService.ATTENDANCE_HABITS_IN_VALID);
+                    }
+                    itemUserHabitsContent.setAttendanceProcess(attendanceProcess);
                 }
                 updateUserHabits(itemHabits);
+                itemHabits.setUpdateDate(new Date());
+                Map<String, Boolean> attendanceProcess = itemHabits.getAttendanceProcess();
+                String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
+                if (attendanceProcess.containsKey(currentDateStr)) {
+                    attendanceProcess.put(currentDateStr, true);
+                } else {
+                    throw new ServiceException(ErrorCodeService.ATTENDANCE_HABITS_IN_VALID);
+                }
+                itemHabits.setAttendanceProcess(attendanceProcess);
                 userHabitsRepo.save(itemHabits);
             }
         }
@@ -142,7 +160,7 @@ public class UserHabitsService {
                 default:
                     break;
             }
-            itemUserHabitsContent.setUpdateDate(new Date());
+//            itemUserHabitsContent.setUpdateDate(new Date());
         }
     }
 
