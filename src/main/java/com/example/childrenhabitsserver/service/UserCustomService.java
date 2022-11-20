@@ -49,6 +49,8 @@ public class UserCustomService {
                 .expirationJWTDate(DateTimeUtils.addDate(new Date(), 12))
                 .createDate(new Date())
                 .updateDate(new Date())
+                .userAddress("Chưa cập nhật")
+                .userAddress("Chưa cập nhật")
                 .build();
         UserCustomStorage userCustomStorageDBNew = userRepository.save(userCustomStorage);
         Map<String, Object> scopes = new HashMap<>();
@@ -82,6 +84,8 @@ public class UserCustomService {
                 .expirationJWTDate(new Date())
                 .createDate(new Date())
                 .updateDate(new Date())
+                .userAddress("Chưa cập nhật")
+                .userAddress("Chưa cập nhật")
                 .build();
         UserCustomStorage userCustomStorageDBNew = userRepository.save(userCustomStorage);
         String apiConfirmCreateUser = String.format("http://%s%s%s", HostAddress.serverAddress, "/user/confirm-create-new/", userCustomStorageDBNew.getId());
