@@ -53,18 +53,19 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        Date currentDate = new Date();
-        if (user.getExpirationJWTDate() == null) {
-            log.info("ExpirationJWTDate {}", user.getExpirationJWTDate());
-            return false;
-        }
-        if (user.getExpirationJWTDate().before(currentDate)){
-            log.info("ExpirationJWTDate {}", user.getExpirationJWTDate());
-            log.info("currentDate {}", currentDate);
-            return false;
-        }
+//        Date currentDate = new Date();
+//        if (user.getExpirationJWTDate() == null) {
+//            log.info("ExpirationJWTDate {}", user.getExpirationJWTDate());
+//            return false;
+//        }
+//        if (user.getExpirationJWTDate().before(currentDate)){
+//            log.info("ExpirationJWTDate {}", user.getExpirationJWTDate());
+//            log.info("currentDate {}", currentDate);
+//            return false;
+//        }
 
-        return true;
+//        return true;
+        return false;
     }
 
     @Override

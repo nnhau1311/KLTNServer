@@ -53,6 +53,9 @@ public class JwtTokenProvider {
                     .setSigningKey(JWT_SECRET)
                     .parseClaimsJws(token)
                     .getBody();
+            if (claims.getExpiration().before(new Date())) {
+                throw new JwtException("Expired JWT token");
+            }
             return claims.getSubject();
         } catch (MalformedJwtException ex) {
             log.error("Invalid JWT token");
