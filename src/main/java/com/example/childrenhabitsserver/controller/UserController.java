@@ -69,13 +69,13 @@ public class UserController {
         return WrapResponse.ok(customUserDetailsService.resetPassword(userId));
     }
 
-    @RequestMapping(value = "/disable/{userId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/disable/{userId}", method = RequestMethod.POST)
     public WrapResponse<Object> disableUser(@PathVariable String userId) {
         log.info("disable userId {}", userId);
         return WrapResponse.ok(customUserDetailsService.disableUser(userId));
     }
 
-    @RequestMapping(value = "/active/{userId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/active/{userId}", method = RequestMethod.POST)
     public WrapResponse<Object> activeUser(@PathVariable String userId) {
         log.info("disable userId {}", userId);
         return WrapResponse.ok(customUserDetailsService.activeUser(userId));

@@ -19,7 +19,8 @@ public class JwtTokenProvider {
 
     //Thời gian có hiệu lực của chuỗi jwt
 //    private final long JWT_EXPIRATION = 604800000L;
-    private final int JWT_EXPIRATION_HOUR = 1;
+//    private final int JWT_EXPIRATION_HOUR = 1;
+    private final int JWT_EXPIRATION_HOUR = 12;
 
     // Tạo ra jwt từ thông tin user
     public JWTTokenModelResponse generateToken(CustomUserDetails userDetails) {
