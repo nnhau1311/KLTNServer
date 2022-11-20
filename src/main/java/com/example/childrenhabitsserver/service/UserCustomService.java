@@ -7,6 +7,7 @@ import com.example.childrenhabitsserver.common.constant.ErrorCodeService;
 import com.example.childrenhabitsserver.common.request.user.ChangePasswordUserRequest;
 import com.example.childrenhabitsserver.common.request.user.CreateNewUserRequest;
 import com.example.childrenhabitsserver.common.request.user.ResetPasswordUserRequest;
+import com.example.childrenhabitsserver.common.request.user.UpdateUserInforRequest;
 import com.example.childrenhabitsserver.entity.UserCustomStorage;
 import com.example.childrenhabitsserver.model.NotificationModel;
 import com.example.childrenhabitsserver.repository.UserRepository;
@@ -210,6 +211,16 @@ public class UserCustomService {
     public UserCustomStorage disableUser(String userId){
         UserCustomStorage userCustomStorage = findById(userId);
         userCustomStorage.setUpdateDate(new Date());
+        userCustomStorage.setStatus(UserStatus.DISABLE);
+        return userRepository.save(userCustomStorage);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public UserCustomStorage updateUserInfor(String userId, UpdateUserInforRequest updateUserInforRequest){
+        UserCustomStorage userCustomStorage = findById(userId);
+        userCustomStorage.setUserFullName(updateUserInforRequest.getUserFullName());
+        userCustomStorage.setUserAddress(updateUserInforRequest.getUserAddress());
+        userCustomStorage.setUserNumberPhone(updateUserInforRequest.getUserNumberPhone());
         userCustomStorage.setStatus(UserStatus.DISABLE);
         return userRepository.save(userCustomStorage);
     }

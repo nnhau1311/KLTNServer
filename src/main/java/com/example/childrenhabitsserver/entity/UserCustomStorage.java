@@ -37,4 +37,6 @@ public class UserCustomStorage {
     private String role;
     private String email;
     private String userFullName; // tên người dùng
+    private String userAddress;
+    private String userNumberPhone;
 }

@@ -5,6 +5,7 @@ import com.example.childrenhabitsserver.common.request.user.ChangePasswordUserRe
 import com.example.childrenhabitsserver.common.request.user.CreateNewUserRequest;
 import com.example.childrenhabitsserver.base.response.WrapResponse;
 import com.example.childrenhabitsserver.common.request.user.ResetPasswordUserRequest;
+import com.example.childrenhabitsserver.common.request.user.UpdateUserInforRequest;
 import com.example.childrenhabitsserver.service.UserCustomService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,9 +70,14 @@ public class UserController {
 
     @RequestMapping(value = "/disable/{userId}", method = RequestMethod.GET)
     public WrapResponse<Object> disableUser(@PathVariable String userId) {
-        // Đường linh xác nhân reset mật khẩu
         log.info("disable userId {}", userId);
         return WrapResponse.ok(customUserDetailsService.disableUser(userId));
+    }
+
+    @RequestMapping(value = "/update-infor/{userId}", method = RequestMethod.GET)
+    public WrapResponse<Object> updateInfor(@PathVariable String userId, @RequestBody UpdateUserInforRequest request) {
+        log.info("update userId {}", userId);
+        return WrapResponse.ok(customUserDetailsService.updateUserInfor(userId, request));
     }
 
     // QUERY ====================================================
