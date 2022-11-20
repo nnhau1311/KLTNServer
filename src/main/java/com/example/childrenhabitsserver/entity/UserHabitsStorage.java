@@ -42,9 +42,10 @@ public class UserHabitsStorage {
     private Date updateDate;
 
     @ElementCollection
-    private List<UserHabitsAttendanceProcess> attendanceProcess;
+//    private List<UserHabitsAttendanceProcess> attendanceProcess;
+    private Map<String, Boolean> attendanceProcess;
 //    @ElementCollection
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<UserHabitsContent> habitsContents;
 
 }

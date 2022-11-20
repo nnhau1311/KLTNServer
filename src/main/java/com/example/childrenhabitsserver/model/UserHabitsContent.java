@@ -37,5 +37,6 @@ public class UserHabitsContent {
     private Date endDate;
     private Date updateDate;
     @ElementCollection
-    private List<UserHabitsAttendanceProcess> attendanceProcess;
+//    private List<UserHabitsAttendanceProcess> attendanceProcess;
+    private Map<String, Boolean> attendanceProcess;
 }

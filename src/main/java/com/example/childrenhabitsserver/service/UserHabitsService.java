@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -38,6 +39,7 @@ public class UserHabitsService {
         this.serviceUtils = serviceUtils;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public UserHabitsStorage createANewHabitsForUser(String userId, CreateUserHabitsRequest createUserHabitsRequest){
         if (StringUtils.isBlank(createUserHabitsRequest.getHabitsId())) {
             throw new ServiceException(ErrorCodeService.ID_HABITS_INVALID);
@@ -64,26 +66,20 @@ public class UserHabitsService {
             itemContent.setStartDate(startDateContent);
             itemContent.setEndDate(endDateContent);
             itemContent.setUpdateDate(new Date());
-            List<UserHabitsAttendanceProcess> attendanceProcess = new ArrayList<>();
+            Map<String, Boolean> attendanceProcess = new HashMap<>();
             for (int i = 0; i < itemContent.getNumberDateExecute(); i ++) {
-                String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
-                UserHabitsAttendanceProcess userHabitsAttendanceProcess = UserHabitsAttendanceProcess.builder()
-                        .dateAttendanceExpect(currentDateStr)
-                        .hasAttendanceExpectDate(false)
-                        .build();
-                attendanceProcess.add(userHabitsAttendanceProcess);
+                Date dateCalculator = DateTimeUtils.addDate(startDateContent, i);
+                String currentDateStr = DateTimeUtils.convertDateToString(dateCalculator, DateTimeUtils.DATE_FORMAT_DDMMYYYY);
+                attendanceProcess.put(currentDateStr, false);
             }
             itemContent.setAttendanceProcess(attendanceProcess);
         }
         Date endDate = DateTimeUtils.addDate(createUserHabitsRequest.getDateStart(), habitsStorage.getNumberDateExecute());
-        List<UserHabitsAttendanceProcess> attendanceProcess = new ArrayList<>();
+        Map<String, Boolean> attendanceProcess = new HashMap<>();
         for (int i = 0; i < habitsStorage.getNumberDateExecute(); i ++) {
-            String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
-            UserHabitsAttendanceProcess userHabitsAttendanceProcess = UserHabitsAttendanceProcess.builder()
-                    .dateAttendanceExpect(currentDateStr)
-                    .hasAttendanceExpectDate(false)
-                    .build();
-            attendanceProcess.add(userHabitsAttendanceProcess);
+            Date dateCalculator = DateTimeUtils.addDate(createUserHabitsRequest.getDateStart(), i);
+            String currentDateStr = DateTimeUtils.convertDateToString(dateCalculator, DateTimeUtils.DATE_FORMAT_DDMMYYYY);
+            attendanceProcess.put(currentDateStr, false);
         }
 
         UserHabitsStorage userHabitsStorage = UserHabitsStorage.builder()
@@ -92,8 +88,6 @@ public class UserHabitsService {
                 .habitsName(habitsStorage.getHabitsName())
                 .habitsType(habitsStorage.getHabitsType())
                 .typeOfFinishCourse(habitsStorage.getTypeOfFinishCourse())
-//                .totalLevelComplete("0")
-//                .totalPercentComplete(0d)
                 .totalCourse(habitsStorage.getTotalCourse())
                 .executeCourse("0")
                 .habitsContents(userHabitsContent)
@@ -107,6 +101,7 @@ public class UserHabitsService {
         return userHabitsRepo.save(userHabitsStorage);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public String attendancePerHabitsContent(String userId, AttendanceUserHabitsContentRequest request) {
         List<UserHabitsStorage> userHabitsStorage = userHabitsRepo.findByUserId(userId);
         for(UserHabitsStorage itemHabits: userHabitsStorage) {
@@ -178,7 +173,6 @@ public class UserHabitsService {
                 itemHabits.setExecuteCourse(countExecuteDone.toString());
                 break;
             case TypeOfFinishCourse.PERCENTAGE:
-//                Double percentExecuteTotal = (Double) serviceUtils.parseValue(itemHabits.getTypeOfFinishCourse(), itemHabits.getTotalCourse());
                 Double percentExecute = (countExecuteDone/itemHabits.getHabitsContents().size()) * 100;
                 String result = String.format("%.2f", percentExecute);
                 itemHabits.setExecuteCourse(result);
@@ -190,6 +184,7 @@ public class UserHabitsService {
 
     // UPDATE ==================================================================
 
+    @Transactional(rollbackFor = Exception.class)
     public UserHabitsStorage updateUserHabits(UpdateUserHabitsFullDataRequest request){
         Optional<UserHabitsStorage> optionalHabitsStorage = userHabitsRepo.findById(request.getId());
         if (!optionalHabitsStorage.isPresent()) {
@@ -202,6 +197,7 @@ public class UserHabitsService {
 
     // DELETE ==================================================================
 
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteUserHabitsId(String userHabitsStoreId){
         Optional<UserHabitsStorage> optionalHabitsStorage = userHabitsRepo.findById(userHabitsStoreId);
         if (!optionalHabitsStorage.isPresent()) {
@@ -210,7 +206,6 @@ public class UserHabitsService {
         UserHabitsStorage userHabitsStorage = optionalHabitsStorage.get();
         userHabitsStorage.setStatus(UserHabitsStatus.DISABLE);
         userHabitsRepo.save(userHabitsStorage);
-//        userHabitsRepo.delete(optionalHabitsStorage.get());
         return true;
     }
 
