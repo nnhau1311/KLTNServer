@@ -7,6 +7,7 @@ import com.example.childrenhabitsserver.base.response.WrapResponse;
 import com.example.childrenhabitsserver.common.request.user.ResetPasswordUserRequest;
 import com.example.childrenhabitsserver.common.request.user.UpdateUserInforRequest;
 import com.example.childrenhabitsserver.service.UserCustomService;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -74,6 +75,7 @@ public class UserController {
         return WrapResponse.ok(customUserDetailsService.disableUser(userId));
     }
 
+    @ApiOperation(value = "Cập nhật thông tin cá nhân của người dùng", notes = "Truyền id qua path")
     @RequestMapping(value = "/update-infor/{userId}", method = RequestMethod.GET)
     public WrapResponse<Object> updateInfor(@PathVariable String userId, @RequestBody UpdateUserInforRequest request) {
         log.info("update userId {}", userId);
