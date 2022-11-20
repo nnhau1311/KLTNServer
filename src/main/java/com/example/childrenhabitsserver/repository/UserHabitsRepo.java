@@ -12,6 +12,7 @@ import java.util.List;
 @Repository
 public interface UserHabitsRepo extends JpaRepository<UserHabitsStorage, String> {
     List<UserHabitsStorage> findByUserIdAndStatus(String userId, Integer status);
+    Page<UserHabitsStorage> findByUserIdAndStatusNot(String userId, Integer status, Pageable pageable);
     List<UserHabitsStorage> findByUserId(String userId);
     Page<UserHabitsStorage> findByUserId(String userId, Pageable pageable);
 }

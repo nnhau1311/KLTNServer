@@ -56,7 +56,7 @@ public class UserHabitsController {
     // DELETE =============================================================
 
     @ApiOperation(value = "Xoá thói quen của người dùng bằng id", notes = "userHabitsId id của thói quen của người dùng (Không phải là habitsId - id của thói quen")
-    @RequestMapping(value = "/delete-habits/{userHabitsId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/delete-habits/{userHabitsId}", method = RequestMethod.POST)
     public WrapResponse<Object> deleteUserHabitsById(@PathVariable String userHabitsId) {
         return WrapResponse.ok(userHabitsService.deleteUserHabitsId(userHabitsId));
     }

@@ -12,6 +12,7 @@ import java.util.List;
 public class AttendanceUserHabitsContentRequest {
 //    private String userId;
 //    @NotBlank(message = "ID của thói quen không được để trống")
+    private String userHabitsId;
     private String habitsId;
     private List<String> listHabitsContentCode;
 }

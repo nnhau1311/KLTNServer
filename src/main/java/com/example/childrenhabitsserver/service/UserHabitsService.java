@@ -19,6 +19,7 @@ import com.example.childrenhabitsserver.utils.DateTimeUtils;
 import com.example.childrenhabitsserver.utils.MappingUtils;
 import com.example.childrenhabitsserver.utils.PageableUtils;
 import com.example.childrenhabitsserver.utils.ServiceUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 @Service
+@Slf4j
 public class UserHabitsService {
     private final HabitsRepo habitsRepo;
     private final UserHabitsRepo userHabitsRepo;
@@ -105,29 +107,12 @@ public class UserHabitsService {
     public String attendancePerHabitsContent(String userId, AttendanceUserHabitsContentRequest request) {
         List<UserHabitsStorage> userHabitsStorage = userHabitsRepo.findByUserId(userId);
         for(UserHabitsStorage itemHabits: userHabitsStorage) {
-            if (itemHabits.getHabitsId().equals(request.getHabitsId())) {
+            if (itemHabits.getId().equals(request.getUserHabitsId())) {
                 for(UserHabitsContent itemUserHabitsContent: itemHabits.getHabitsContents()) {
                     updateUserHabitsContent(itemUserHabitsContent, request);
-                    itemUserHabitsContent.setUpdateDate(new Date());
-                    Map<String, Boolean> attendanceProcess = itemUserHabitsContent.getAttendanceProcess();
-                    String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
-                    if (attendanceProcess.containsKey(currentDateStr)) {
-                        attendanceProcess.put(currentDateStr, true);
-                    } else {
-                        throw new ServiceException(ErrorCodeService.ATTENDANCE_HABITS_IN_VALID);
-                    }
-                    itemUserHabitsContent.setAttendanceProcess(attendanceProcess);
+
                 }
                 updateUserHabits(itemHabits);
-                itemHabits.setUpdateDate(new Date());
-                Map<String, Boolean> attendanceProcess = itemHabits.getAttendanceProcess();
-                String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
-                if (attendanceProcess.containsKey(currentDateStr)) {
-                    attendanceProcess.put(currentDateStr, true);
-                } else {
-                    throw new ServiceException(ErrorCodeService.ATTENDANCE_HABITS_IN_VALID);
-                }
-                itemHabits.setAttendanceProcess(attendanceProcess);
                 userHabitsRepo.save(itemHabits);
             }
         }
@@ -137,6 +122,18 @@ public class UserHabitsService {
     private void updateUserHabitsContent(UserHabitsContent itemUserHabitsContent, AttendanceUserHabitsContentRequest request) {
         Boolean isNeedAttendance = request.getListHabitsContentCode().stream().anyMatch(id -> id.equals(itemUserHabitsContent.getContentCode()));
         if (isNeedAttendance) {
+            itemUserHabitsContent.setUpdateDate(new Date());
+            Map<String, Boolean> attendanceProcess = itemUserHabitsContent.getAttendanceProcess();
+            String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
+            if (attendanceProcess.containsKey(currentDateStr)) {
+                attendanceProcess.put(currentDateStr, true);
+            }
+            else {
+                log.info("currentDateStr {}", currentDateStr);
+                log.info("attendanceProcess {}", attendanceProcess.toString());
+                throw new ServiceException(ErrorCodeService.ATTENDANCE_HABITS_IN_VALID);
+            }
+            itemUserHabitsContent.setAttendanceProcess(attendanceProcess);
             switch (itemUserHabitsContent.getTypeOfFinishCourse()) {
                 case TypeOfFinishCourse.PERIOD:
                     Double totalCourse = (Double) serviceUtils.parseValue(itemUserHabitsContent.getTypeOfFinishCourse(), itemUserHabitsContent.getTotalCourse());
@@ -166,6 +163,15 @@ public class UserHabitsService {
 
     private void updateUserHabits(UserHabitsStorage itemHabits) {
         Boolean isDoneAllContent = itemHabits.getHabitsContents().stream().allMatch(item -> item.getStatus() == UserHabitsContentStatus.DONE);
+        itemHabits.setUpdateDate(new Date());
+        Map<String, Boolean> attendanceProcess = itemHabits.getAttendanceProcess();
+        String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
+        if (attendanceProcess.containsKey(currentDateStr)) {
+            attendanceProcess.put(currentDateStr, true);
+        } else {
+            throw new ServiceException(ErrorCodeService.ATTENDANCE_HABITS_IN_VALID);
+        }
+        itemHabits.setAttendanceProcess(attendanceProcess);
         if (isDoneAllContent) {
             itemHabits.setStatus(UserHabitsStatus.DONE);
             switch (itemHabits.getTypeOfFinishCourse()) {
@@ -243,7 +249,8 @@ public class UserHabitsService {
     public Page<UserHabitsStorage> getListUserHabits(String userId, BasePageRequest request){
         Pageable pageable = PageableUtils.convertPageableAndSort(request.getPageNumber(), 10, new ArrayList<>());
 
-        Page<UserHabitsStorage> result = userHabitsRepo.findByUserId(userId, pageable);
+//        Page<UserHabitsStorage> result = userHabitsRepo.findByUserId(userId, pageable);
+        Page<UserHabitsStorage> result = userHabitsRepo.findByUserIdAndStatusNot(userId, UserHabitsStatus.DISABLE ,pageable);
         return result;
     }
 
