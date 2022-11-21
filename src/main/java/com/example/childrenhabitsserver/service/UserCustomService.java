@@ -1,6 +1,7 @@
 package com.example.childrenhabitsserver.service;
 
 import com.example.childrenhabitsserver.base.exception.ServiceException;
+import com.example.childrenhabitsserver.base.request.BasePageRequest;
 import com.example.childrenhabitsserver.common.HostAddress;
 import com.example.childrenhabitsserver.common.UserStatus;
 import com.example.childrenhabitsserver.common.constant.ErrorCodeService;
@@ -12,9 +13,12 @@ import com.example.childrenhabitsserver.entity.UserCustomStorage;
 import com.example.childrenhabitsserver.model.NotificationModel;
 import com.example.childrenhabitsserver.repository.UserRepository;
 import com.example.childrenhabitsserver.utils.DateTimeUtils;
+import com.example.childrenhabitsserver.utils.PageableUtils;
 import com.example.childrenhabitsserver.utils.RandomUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -237,6 +241,12 @@ public class UserCustomService {
     }
 
     // Query Data ====================================================
+
+    public Page<UserCustomStorage> findAll(BasePageRequest request) {
+        Pageable pageable = PageableUtils.convertPageableAndSort(request.getPageNumber(), 10, new ArrayList<>());
+        Page<UserCustomStorage> result = userRepository.findAll(pageable);
+        return result;
+    }
 
     public UserCustomStorage findById(String userId) {
         Optional<UserCustomStorage> userCustomStorageOptional = userRepository.findById(userId);

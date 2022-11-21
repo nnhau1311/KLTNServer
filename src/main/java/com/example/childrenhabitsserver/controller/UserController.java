@@ -1,15 +1,19 @@
 package com.example.childrenhabitsserver.controller;
 
 import com.example.childrenhabitsserver.auth.JwtTokenProvider;
+import com.example.childrenhabitsserver.base.request.BasePageRequest;
 import com.example.childrenhabitsserver.common.request.user.ChangePasswordUserRequest;
 import com.example.childrenhabitsserver.common.request.user.CreateNewUserRequest;
 import com.example.childrenhabitsserver.base.response.WrapResponse;
 import com.example.childrenhabitsserver.common.request.user.ResetPasswordUserRequest;
 import com.example.childrenhabitsserver.common.request.user.UpdateUserInforRequest;
+import com.example.childrenhabitsserver.entity.UserCustomStorage;
+import com.example.childrenhabitsserver.entity.UserHabitsStorage;
 import com.example.childrenhabitsserver.service.UserCustomService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
@@ -98,6 +102,12 @@ public class UserController {
     }
 
     // QUERY ====================================================
+
+    @RequestMapping(value = "/get-all", method = RequestMethod.POST)
+    public WrapResponse<Page<UserCustomStorage>> getUserHabits(@RequestBody BasePageRequest basePageRequest) {
+        return WrapResponse.ok(customUserDetailsService.findAll(basePageRequest));
+    }
+
     @RequestMapping(value = "/find-by-id/{userId}", method = RequestMethod.GET)
     public WrapResponse<Object> findById(@PathVariable String userId) {
         return WrapResponse.ok(customUserDetailsService.findById(userId));
