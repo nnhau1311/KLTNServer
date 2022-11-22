@@ -9,12 +9,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @EnableSwagger2
 @EnableJpaRepositories
 @ComponentScan("com.example")
+@CrossOrigin()
 public class ChildrenHabitsServerApplication implements CommandLineRunner{
     public static void main(String[] args) {
         SpringApplication.run(ChildrenHabitsServerApplication.class, args);
