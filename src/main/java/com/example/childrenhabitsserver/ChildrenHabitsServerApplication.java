@@ -16,7 +16,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @EnableJpaRepositories
 @ComponentScan("com.example")
-@CrossOrigin()
+//@CrossOrigin()
 public class ChildrenHabitsServerApplication implements CommandLineRunner{
     public static void main(String[] args) {
         SpringApplication.run(ChildrenHabitsServerApplication.class, args);
