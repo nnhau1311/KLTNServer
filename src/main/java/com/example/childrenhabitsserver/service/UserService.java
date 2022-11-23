@@ -1,7 +1,7 @@
 package com.example.childrenhabitsserver.service;
 
 import com.example.childrenhabitsserver.base.exception.AccessDeniedException;
-import com.example.childrenhabitsserver.common.UserStatus;
+import com.example.childrenhabitsserver.common.constant.UserStatus;
 import com.example.childrenhabitsserver.common.constant.ErrorCodeService;
 import com.example.childrenhabitsserver.entity.CustomUserDetails;
 import com.example.childrenhabitsserver.entity.UserCustomStorage;

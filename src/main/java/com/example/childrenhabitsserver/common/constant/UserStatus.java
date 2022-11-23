@@ -1,4 +1,4 @@
-package com.example.childrenhabitsserver.common;
+package com.example.childrenhabitsserver.common.constant;
 
 public class UserStatus {
     public static final Integer ACTIVE = 1;

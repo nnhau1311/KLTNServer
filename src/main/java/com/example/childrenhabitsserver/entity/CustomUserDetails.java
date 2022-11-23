@@ -1,6 +1,6 @@
 package com.example.childrenhabitsserver.entity;
 
-import com.example.childrenhabitsserver.common.UserStatus;
+import com.example.childrenhabitsserver.common.constant.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor

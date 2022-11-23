@@ -55,7 +55,11 @@ public class HabitsService {
             throw new ServiceException(ErrorCodeService.HABITS_NOT_EXITS);
         }
         HabitsStorage habitsStorage = optionalHabitsStorage.get();
-        habitsStorage = MappingUtils.mapObject(updateHabitsRequest, HabitsStorage.class);
+//        habitsStorage = MappingUtils.mapObject(updateHabitsRequest, HabitsStorage.class);
+        habitsStorage.setHabitsName(updateHabitsRequest.getHabitsName());
+        habitsStorage.setHabitsType(updateHabitsRequest.getHabitsType());
+        habitsStorage.setTypeOfFinishCourse(updateHabitsRequest.getTypeOfFinishCourse());
+        habitsStorage.setHabitsContentList(updateHabitsRequest.getHabitsContentList());
         return habitsRepo.save(habitsStorage);
     }
 

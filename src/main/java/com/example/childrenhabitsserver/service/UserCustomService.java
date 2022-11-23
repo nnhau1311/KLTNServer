@@ -3,7 +3,7 @@ package com.example.childrenhabitsserver.service;
 import com.example.childrenhabitsserver.base.exception.ServiceException;
 import com.example.childrenhabitsserver.base.request.BasePageRequest;
 import com.example.childrenhabitsserver.common.HostAddress;
-import com.example.childrenhabitsserver.common.UserStatus;
+import com.example.childrenhabitsserver.common.constant.UserStatus;
 import com.example.childrenhabitsserver.common.constant.ErrorCodeService;
 import com.example.childrenhabitsserver.common.request.user.ChangePasswordUserRequest;
 import com.example.childrenhabitsserver.common.request.user.CreateNewUserRequest;
