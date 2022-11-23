@@ -62,9 +62,17 @@ public class HabitsService {
         habitsStorage.setHabitsContentList(updateHabitsRequest.getHabitsContentList());
         return habitsRepo.save(habitsStorage);
     }
-
+    // QUERY ===========================================================================
     public Page<HabitsStorage> getAllHabits(BasePageRequest basePageRequest){
         Pageable pageable = PageableUtils.convertPageableAndSort(basePageRequest.getPageNumber(), 10, new ArrayList<>());
         return habitsRepo.findAll(pageable);
+    }
+    public HabitsStorage findById(String habitsId){
+        Optional<HabitsStorage> optionalHabitsStorage = habitsRepo.findById(habitsId);
+        if (!optionalHabitsStorage.isPresent()) {
+            throw new ServiceException(ErrorCodeService.HABITS_NOT_EXITS);
+        }
+        HabitsStorage habitsStorage = optionalHabitsStorage.get();
+        return habitsStorage;
     }
 }

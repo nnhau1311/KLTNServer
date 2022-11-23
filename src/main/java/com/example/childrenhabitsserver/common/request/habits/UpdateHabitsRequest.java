@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 public class UpdateHabitsRequest {
 
-    private String habitsId;
+//    private String habitsId;
     private String habitsName;
     private String habitsType;
     private String typeOfFinishCourse;

@@ -44,5 +44,8 @@ public class HabitsController {
         return WrapResponse.ok(habitsService.getAllHabits(basePageRequest));
     }
 
-
+    @RequestMapping(value = "/find-by-id/{habitsId}", method = RequestMethod.POST)
+    public WrapResponse<HabitsStorage> findHabitsById(@PathVariable String habitsId){
+        return WrapResponse.ok(habitsService.findById(habitsId));
+    }
 }
