@@ -39,7 +39,7 @@ public class HabitsController {
     }
 
     // QUERY ========================================
-    @RequestMapping(value = "/get-all", method = RequestMethod.GET)
+    @RequestMapping(value = "/get-all", method = RequestMethod.POST)
     public WrapResponse<Page<HabitsStorage>> getAllHabitsActive(@RequestBody BasePageRequest basePageRequest){
         return WrapResponse.ok(habitsService.getAllHabits(basePageRequest));
     }
