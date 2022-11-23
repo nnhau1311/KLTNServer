@@ -38,8 +38,8 @@ public class UserHabitsStorage {
     private Integer status = 0; // Mặc định 0 là chưa hoàn thành
     private Date startDate;
     private Date endDate;
-    private Date createDate;
-    private Date updateDate;
+    private Date createdDate;
+    private Date updatedDate;
 
     @ElementCollection
 //    private List<UserHabitsAttendanceProcess> attendanceProcess;

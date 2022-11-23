@@ -8,6 +8,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -29,6 +30,9 @@ public class HabitsStorage {
     private String typeOfFinishCourse; // Loại định nghĩa hoàn thành theo % hay cột mốc
     private String totalCourse = "0";
     private Integer numberDateExecute;
+    private Integer status;
+    private Date createdDate;
+    private Date updatedDate;
     @ElementCollection
     private List<HabitsContent> habitsContentList;
 //    private String content;

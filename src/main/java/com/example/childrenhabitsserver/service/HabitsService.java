@@ -3,6 +3,7 @@ package com.example.childrenhabitsserver.service;
 import com.example.childrenhabitsserver.base.exception.ServiceException;
 import com.example.childrenhabitsserver.base.request.BasePageRequest;
 import com.example.childrenhabitsserver.common.constant.ErrorCodeService;
+import com.example.childrenhabitsserver.common.constant.HabitsStatus;
 import com.example.childrenhabitsserver.common.constant.TypeOfFinishCourse;
 import com.example.childrenhabitsserver.common.request.habits.CreateHabitsRequest;
 import com.example.childrenhabitsserver.common.request.habits.UpdateHabitsRequest;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,6 +48,8 @@ public class HabitsService {
                 break;
         }
         habitsStorage.setNumberDateExecute(totalDateExecute);
+        habitsStorage.setCreatedDate(new Date());
+        habitsStorage.setUpdatedDate(new Date());
         return habitsRepo.save(habitsStorage);
     }
 
@@ -60,13 +64,23 @@ public class HabitsService {
         habitsStorage.setHabitsType(updateHabitsRequest.getHabitsType());
         habitsStorage.setTypeOfFinishCourse(updateHabitsRequest.getTypeOfFinishCourse());
         habitsStorage.setHabitsContentList(updateHabitsRequest.getHabitsContentList());
+        habitsStorage.setUpdatedDate(new Date());
         return habitsRepo.save(habitsStorage);
     }
+
+    public HabitsStorage disableHabit(String habitsId){
+        HabitsStorage habitsStorage = findById(habitsId);
+        habitsStorage.setStatus(HabitsStatus.DISABLE);
+        habitsStorage.setUpdatedDate(new Date());
+        return habitsRepo.save(habitsStorage);
+    }
+
     // QUERY ===========================================================================
     public Page<HabitsStorage> getAllHabits(BasePageRequest basePageRequest){
         Pageable pageable = PageableUtils.convertPageableAndSort(basePageRequest.getPageNumber(), 10, new ArrayList<>());
-        return habitsRepo.findAll(pageable);
+        return habitsRepo.findByStatusNot(HabitsStatus.DISABLE, pageable);
     }
+
     public HabitsStorage findById(String habitsId){
         Optional<HabitsStorage> optionalHabitsStorage = habitsRepo.findById(habitsId);
         if (!optionalHabitsStorage.isPresent()) {

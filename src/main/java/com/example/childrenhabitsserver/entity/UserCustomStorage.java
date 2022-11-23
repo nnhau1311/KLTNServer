@@ -32,8 +32,8 @@ public class UserCustomStorage {
     private String password;
     private Integer status;
     private Date expirationJWTDate;
-    private Date createDate;
-    private Date updateDate;
+    private Date createdDate;
+    private Date updatedDate;
     private String role;
     private String email;
     private String userFullName; // tên người dùng

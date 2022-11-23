@@ -96,8 +96,8 @@ public class UserHabitsService {
                 .status(UserHabitsStatus.NEW)
                 .startDate(createUserHabitsRequest.getDateStart())
                 .endDate(endDate)
-                .updateDate(new Date())
-                .createDate(new Date())
+                .updatedDate(new Date())
+                .createdDate(new Date())
                 .attendanceProcess(attendanceProcess)
                 .build();
         return userHabitsRepo.save(userHabitsStorage);
@@ -163,7 +163,7 @@ public class UserHabitsService {
 
     private void updateUserHabits(UserHabitsStorage itemHabits) {
         Boolean isDoneAllContent = itemHabits.getHabitsContents().stream().allMatch(item -> item.getStatus() == UserHabitsContentStatus.DONE);
-        itemHabits.setUpdateDate(new Date());
+        itemHabits.setUpdatedDate(new Date());
         Map<String, Boolean> attendanceProcess = itemHabits.getAttendanceProcess();
         String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
         if (attendanceProcess.containsKey(currentDateStr)) {
@@ -216,6 +216,7 @@ public class UserHabitsService {
         }
         UserHabitsStorage userHabitsStorage = optionalHabitsStorage.get();
         userHabitsStorage = MappingUtils.mapObject(request, UserHabitsStorage.class);
+        userHabitsStorage.setUpdatedDate(new Date());
         return userHabitsRepo.save(userHabitsStorage);
     }
 
@@ -229,6 +230,7 @@ public class UserHabitsService {
         }
         UserHabitsStorage userHabitsStorage = optionalHabitsStorage.get();
         userHabitsStorage.setStatus(UserHabitsStatus.DISABLE);
+        userHabitsStorage.setUpdatedDate(new Date());
         userHabitsRepo.save(userHabitsStorage);
         return true;
     }

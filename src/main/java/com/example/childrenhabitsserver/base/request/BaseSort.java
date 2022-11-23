@@ -10,6 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BaseSort {
-    private String key;
+    private String key = "createdDate";
     private Boolean asc = true;
 }

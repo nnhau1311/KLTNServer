@@ -29,13 +29,18 @@ public class HabitsController {
     }
 
     @RequestMapping(value = "/create-a-new", method = RequestMethod.POST)
-    public HabitsStorage saveTest(@RequestBody CreateHabitsRequest createHabitsRequest){
-        return habitsService.createANewHabits(createHabitsRequest);
+    public WrapResponse<HabitsStorage> saveTest(@RequestBody CreateHabitsRequest createHabitsRequest){
+        return WrapResponse.ok(habitsService.createANewHabits(createHabitsRequest));
     }
 
     @RequestMapping(value = "/update/{habitsId}", method = RequestMethod.POST)
-    public HabitsStorage saveTest(@PathVariable String habitsId, @RequestBody UpdateHabitsRequest updateHabitsRequest){
-        return habitsService.updateAHabits(habitsId, updateHabitsRequest);
+    public WrapResponse<HabitsStorage> saveTest(@PathVariable String habitsId, @RequestBody UpdateHabitsRequest updateHabitsRequest){
+        return WrapResponse.ok(habitsService.updateAHabits(habitsId, updateHabitsRequest));
+    }
+
+    @RequestMapping(value = "/disable/{habitsId}", method = RequestMethod.POST)
+    public WrapResponse<HabitsStorage> saveTest(@PathVariable String habitsId){
+        return WrapResponse.ok(habitsService.disableHabit(habitsId));
     }
 
     // QUERY ========================================

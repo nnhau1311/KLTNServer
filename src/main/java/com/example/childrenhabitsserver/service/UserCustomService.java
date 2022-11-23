@@ -51,8 +51,8 @@ public class UserCustomService {
                 .userFullName(createNewUserRequest.getUserFullName())
                 .status(UserStatus.ACTIVE)
                 .expirationJWTDate(DateTimeUtils.addDate(new Date(), 12))
-                .createDate(new Date())
-                .updateDate(new Date())
+                .createdDate(new Date())
+                .updatedDate(new Date())
                 .userAddress("Chưa cập nhật")
                 .userAddress("Chưa cập nhật")
                 .build();
@@ -86,8 +86,8 @@ public class UserCustomService {
                 .userFullName(createNewUserRequest.getUserFullName())
                 .status(UserStatus.DISABLE)
                 .expirationJWTDate(new Date())
-                .createDate(new Date())
-                .updateDate(new Date())
+                .createdDate(new Date())
+                .updatedDate(new Date())
                 .userAddress("Chưa cập nhật")
                 .userAddress("Chưa cập nhật")
                 .build();
@@ -121,7 +121,7 @@ public class UserCustomService {
         }
         UserCustomStorage user = userCustomStorageOptional.get();
         user.setStatus(UserStatus.ACTIVE);
-        user.setUpdateDate(new Date());
+        user.setUpdatedDate(new Date());
         return userRepository.save(user);
     }
 
@@ -143,7 +143,7 @@ public class UserCustomService {
             log.info("New pass: {}", request.getNewPassword());
             String passBCrypt = passwordEncoder.encode(request.getNewPassword());
             user.setPassword(passBCrypt);
-            user.setUpdateDate(new Date());
+            user.setUpdatedDate(new Date());
         }
         return userRepository.save(user);
     }
@@ -190,7 +190,7 @@ public class UserCustomService {
         log.info("New pass: {}", randomResetPassword);
         String passBCrypt = passwordEncoder.encode(randomResetPassword);
         user.setPassword(passBCrypt);
-        user.setUpdateDate(new Date());
+        user.setUpdatedDate(new Date());
 
         // Gửi email
         Map<String, Object> scopes = new HashMap<>();
@@ -211,14 +211,14 @@ public class UserCustomService {
     public UserCustomStorage updateExpirationJWTDate(String userId, Date expirationJWTDate){
         UserCustomStorage userCustomStorage = findById(userId);
         userCustomStorage.setExpirationJWTDate(expirationJWTDate);
-        userCustomStorage.setUpdateDate(new Date());
+        userCustomStorage.setUpdatedDate(new Date());
         return userRepository.save(userCustomStorage);
     }
 
     @Transactional(rollbackFor = Exception.class)
     public UserCustomStorage disableUser(String userId){
         UserCustomStorage userCustomStorage = findById(userId);
-        userCustomStorage.setUpdateDate(new Date());
+        userCustomStorage.setUpdatedDate(new Date());
         userCustomStorage.setStatus(UserStatus.DISABLE);
         return userRepository.save(userCustomStorage);
     }
@@ -226,7 +226,7 @@ public class UserCustomService {
     @Transactional(rollbackFor = Exception.class)
     public UserCustomStorage activeUser(String userId){
         UserCustomStorage userCustomStorage = findById(userId);
-        userCustomStorage.setUpdateDate(new Date());
+        userCustomStorage.setUpdatedDate(new Date());
         userCustomStorage.setStatus(UserStatus.ACTIVE);
         return userRepository.save(userCustomStorage);
     }
