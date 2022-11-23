@@ -1,5 +1,6 @@
 package com.example.childrenhabitsserver.controller;
 
+import com.example.childrenhabitsserver.base.request.BasePageRequest;
 import com.example.childrenhabitsserver.base.response.WrapResponse;
 import com.example.childrenhabitsserver.common.request.habits.CreateHabitsRequest;
 import com.example.childrenhabitsserver.common.request.habits.UpdateHabitsRequest;
@@ -39,8 +40,8 @@ public class HabitsController {
 
     // QUERY ========================================
     @RequestMapping(value = "/get-all", method = RequestMethod.GET)
-    public WrapResponse<Page<HabitsStorage>> getAllHabitsActive(){
-        return WrapResponse.ok(habitsService.getAllHabits());
+    public WrapResponse<Page<HabitsStorage>> getAllHabitsActive(@RequestBody BasePageRequest basePageRequest){
+        return WrapResponse.ok(habitsService.getAllHabits(basePageRequest));
     }
 
 
