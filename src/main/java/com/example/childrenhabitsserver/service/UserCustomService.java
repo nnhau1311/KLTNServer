@@ -208,6 +208,40 @@ public class UserCustomService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    public UserCustomStorage changePassword(ResetPasswordUserRequest resetPasswordUserRequest){
+        if (StringUtils.isBlank(resetPasswordUserRequest.getUserInfor())) {
+            log.error("User ID không hợp lệ:" + resetPasswordUserRequest.getUserInfor());
+            throw new ServiceException(ErrorCodeService.REQUEST_RESET_PASSWORD_INVALID);
+        }
+        UserCustomStorage user = userRepository.findByUsernameOrEmail(resetPasswordUserRequest.getUserInfor(), resetPasswordUserRequest.getUserInfor());
+        if (user == null) {
+            log.error("Không tìm thấy người dùng:" + resetPasswordUserRequest.getUserInfor());
+            throw new ServiceException(ErrorCodeService.USER_HAD_NOT_EXITS);
+        }
+        String oldPass = resetPasswordUserRequest.getOldPassword();
+        String newPass = resetPasswordUserRequest.getNewPassword();
+        String passBCrypt = "";
+        if (passwordEncoder.matches(oldPass, user.getPassword())) {
+            passBCrypt = passwordEncoder.encode(newPass);
+            user.setPassword(passBCrypt);
+            user.setUpdatedDate(new Date());
+        }
+
+        // Gửi email
+        Map<String, Object> scopes = new HashMap<>();
+        scopes.put("userFullName", user.getUserFullName());
+        scopes.put("userName", user.getUsername());
+        NotificationModel notificationModel = NotificationModel.builder()
+                .to(user.getEmail())
+                .template("NotifyChangePasswordUser")
+                .scopes(scopes)
+                .subject("Thông báo thay đổi mật khẩu người dùng")
+                .build();
+        sendEmailNotificationService.sendEmail(notificationModel);
+        return userRepository.save(user);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public UserCustomStorage updateExpirationJWTDate(String userId, Date expirationJWTDate){
         UserCustomStorage userCustomStorage = findById(userId);
         userCustomStorage.setExpirationJWTDate(expirationJWTDate);
