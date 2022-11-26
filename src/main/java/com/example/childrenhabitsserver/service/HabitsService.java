@@ -18,6 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -50,6 +52,7 @@ public class HabitsService {
         habitsStorage.setNumberDateExecute(totalDateExecute);
         habitsStorage.setCreatedDate(new Date());
         habitsStorage.setUpdatedDate(new Date());
+        habitsStorage.setStatus(HabitsStatus.NEW);
         return habitsRepo.save(habitsStorage);
     }
 
@@ -77,8 +80,13 @@ public class HabitsService {
 
     // QUERY ===========================================================================
     public Page<HabitsStorage> getAllHabits(BasePageRequest basePageRequest){
+//        List<HabitsStorage> list = habitsRepo.findAll();
+//        for (HabitsStorage item: list){
+//            item.setStatus(HabitsStatus.NEW);
+//            habitsRepo.save(item);
+//        }
         Pageable pageable = PageableUtils.convertPageableAndSort(basePageRequest.getPageNumber(), 10, new ArrayList<>());
-        return habitsRepo.findByStatusNot(HabitsStatus.DISABLE, pageable);
+        return habitsRepo.findByStatusIsNot(HabitsStatus.DISABLE, pageable);
     }
 
     public HabitsStorage findById(String habitsId){

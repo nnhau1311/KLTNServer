@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface HabitsRepo extends JpaRepository<HabitsStorage, String> {
-    Page<HabitsStorage> findByStatusNot(Integer status, Pageable pageable);
+    Page<HabitsStorage> findByStatusIsNot(Integer status, Pageable pageable);
 }
