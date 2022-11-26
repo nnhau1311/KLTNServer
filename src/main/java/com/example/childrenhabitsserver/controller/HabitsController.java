@@ -49,6 +49,11 @@ public class HabitsController {
         return WrapResponse.ok(habitsService.getAllHabits(basePageRequest));
     }
 
+    @RequestMapping(value = "/get-all-admin", method = RequestMethod.POST)
+    public WrapResponse<Page<HabitsStorage>> getAllHabitsAdmin(@RequestBody BasePageRequest basePageRequest){
+        return WrapResponse.ok(habitsService.getAllHabitsAdmin(basePageRequest));
+    }
+
     @RequestMapping(value = "/find-by-id/{habitsId}", method = RequestMethod.POST)
     public WrapResponse<HabitsStorage> findHabitsById(@PathVariable String habitsId){
         return WrapResponse.ok(habitsService.findById(habitsId));

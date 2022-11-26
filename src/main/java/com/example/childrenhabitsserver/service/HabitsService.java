@@ -89,6 +89,11 @@ public class HabitsService {
         return habitsRepo.findByStatusIsNot(HabitsStatus.DISABLE, pageable);
     }
 
+    public Page<HabitsStorage> getAllHabitsAdmin(BasePageRequest basePageRequest){
+        Pageable pageable = PageableUtils.convertPageableAndSort(basePageRequest.getPageNumber(), 10, new ArrayList<>());
+        return habitsRepo.findAll(pageable);
+    }
+
     public HabitsStorage findById(String habitsId){
         Optional<HabitsStorage> optionalHabitsStorage = habitsRepo.findById(habitsId);
         if (!optionalHabitsStorage.isPresent()) {
