@@ -3,6 +3,7 @@ package com.example.childrenhabitsserver.service;
 import com.example.childrenhabitsserver.base.exception.ServiceException;
 import com.example.childrenhabitsserver.base.request.BasePageRequest;
 import com.example.childrenhabitsserver.common.HostAddress;
+import com.example.childrenhabitsserver.common.constant.UserRole;
 import com.example.childrenhabitsserver.common.constant.UserStatus;
 import com.example.childrenhabitsserver.common.constant.ErrorCodeService;
 import com.example.childrenhabitsserver.common.request.user.ChangePasswordUserRequest;
@@ -55,6 +56,7 @@ public class UserCustomService {
                 .updatedDate(new Date())
                 .userAddress("Chưa cập nhật")
                 .userAddress("Chưa cập nhật")
+                .role(UserRole.NORMAL)
                 .build();
         UserCustomStorage userCustomStorageDBNew = userRepository.save(userCustomStorage);
         Map<String, Object> scopes = new HashMap<>();
@@ -90,6 +92,7 @@ public class UserCustomService {
                 .updatedDate(new Date())
                 .userAddress("Chưa cập nhật")
                 .userAddress("Chưa cập nhật")
+                .role(UserRole.NORMAL)
                 .build();
         UserCustomStorage userCustomStorageDBNew = userRepository.save(userCustomStorage);
         String apiConfirmCreateUser = String.format("http://%s%s%s", HostAddress.serverAddress, "/user/confirm-create-new/", userCustomStorageDBNew.getId());
@@ -145,7 +148,19 @@ public class UserCustomService {
             user.setPassword(passBCrypt);
             user.setUpdatedDate(new Date());
         }
-        return userRepository.save(user);
+        UserCustomStorage result = userRepository.save(user);
+        // Gửi email
+        Map<String, Object> scopes = new HashMap<>();
+        scopes.put("userFullName", user.getUserFullName());
+        scopes.put("userName", user.getUsername());
+        NotificationModel notificationModel = NotificationModel.builder()
+                .to(user.getEmail())
+                .template("NotifyChangePasswordUser")
+                .scopes(scopes)
+                .subject("Thông báo thay đổi mật khẩu người dùng")
+                .build();
+        sendEmailNotificationService.sendEmail(notificationModel);
+        return result;
     }
 
     public String sendEmailToConfirmResetPassword(ResetPasswordUserRequest request){
