@@ -73,11 +73,11 @@ public class UserController {
         return WrapResponse.ok(customUserDetailsService.resetPassword(userId));
     }
 
-    @RequestMapping(value = "/change-password", method = RequestMethod.POST)
-    public WrapResponse<Object> changePasswordUser(@Valid @RequestBody ResetPasswordUserRequest resetPasswordUserRequest) {
-        // Thực hiện yêu cầu thay đổi password, hệ thống kiểm tra và gửi email xác nhận
-        return WrapResponse.ok(customUserDetailsService.changePassword(resetPasswordUserRequest));
-    }
+//    @RequestMapping(value = "/change-password", method = RequestMethod.POST)
+//    public WrapResponse<Object> changePasswordUser(@Valid @RequestBody ResetPasswordUserRequest resetPasswordUserRequest) {
+//        // Thực hiện yêu cầu thay đổi password, hệ thống kiểm tra và gửi email xác nhận
+//        return WrapResponse.ok(customUserDetailsService.changePassword(resetPasswordUserRequest));
+//    }
 
     @RequestMapping(value = "/disable/{userId}", method = RequestMethod.POST)
     public WrapResponse<Object> disableUser(@PathVariable String userId) {
