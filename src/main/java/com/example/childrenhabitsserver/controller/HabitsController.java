@@ -2,6 +2,7 @@ package com.example.childrenhabitsserver.controller;
 
 import com.example.childrenhabitsserver.base.request.BasePageRequest;
 import com.example.childrenhabitsserver.base.response.WrapResponse;
+import com.example.childrenhabitsserver.common.constant.HabitsStatus;
 import com.example.childrenhabitsserver.common.request.habits.CreateHabitsRequest;
 import com.example.childrenhabitsserver.common.request.habits.UpdateHabitsRequest;
 import com.example.childrenhabitsserver.entity.HabitsStorage;
@@ -29,18 +30,23 @@ public class HabitsController {
     }
 
     @RequestMapping(value = "/create-a-new", method = RequestMethod.POST)
-    public WrapResponse<HabitsStorage> saveTest(@RequestBody CreateHabitsRequest createHabitsRequest){
+    public WrapResponse<HabitsStorage> saveNewHabits(@RequestBody CreateHabitsRequest createHabitsRequest){
         return WrapResponse.ok(habitsService.createANewHabits(createHabitsRequest));
     }
 
     @RequestMapping(value = "/update/{habitsId}", method = RequestMethod.POST)
-    public WrapResponse<HabitsStorage> saveTest(@PathVariable String habitsId, @RequestBody UpdateHabitsRequest updateHabitsRequest){
+    public WrapResponse<HabitsStorage> updateHabits(@PathVariable String habitsId, @RequestBody UpdateHabitsRequest updateHabitsRequest){
         return WrapResponse.ok(habitsService.updateAHabits(habitsId, updateHabitsRequest));
     }
 
     @RequestMapping(value = "/disable/{habitsId}", method = RequestMethod.POST)
-    public WrapResponse<HabitsStorage> saveTest(@PathVariable String habitsId){
-        return WrapResponse.ok(habitsService.disableHabit(habitsId));
+    public WrapResponse<HabitsStorage> disableHabits(@PathVariable String habitsId){
+        return WrapResponse.ok(habitsService.updateStatusHabits(habitsId, HabitsStatus.DISABLE));
+    }
+
+    @RequestMapping(value = "/active/{habitsId}", method = RequestMethod.POST)
+    public WrapResponse<HabitsStorage> activeHabits(@PathVariable String habitsId){
+        return WrapResponse.ok(habitsService.updateStatusHabits(habitsId, HabitsStatus.NEW));
     }
 
     // QUERY ========================================

@@ -71,9 +71,9 @@ public class HabitsService {
         return habitsRepo.save(habitsStorage);
     }
 
-    public HabitsStorage disableHabit(String habitsId){
+    public HabitsStorage updateStatusHabits(String habitsId, Integer status){
         HabitsStorage habitsStorage = findById(habitsId);
-        habitsStorage.setStatus(HabitsStatus.DISABLE);
+        habitsStorage.setStatus(status);
         habitsStorage.setUpdatedDate(new Date());
         return habitsRepo.save(habitsStorage);
     }
