@@ -91,7 +91,7 @@ public class UserController {
         return WrapResponse.ok(customUserDetailsService.activeUser(userId));
     }
 
-    @ApiOperation(value = "Cập nhật thông tin cá nhân của người dùng", notes = "Truyền id qua path")
+    @ApiOperation(value = "Cập nhật thông tin cá nhân của người dùng", notes = "chỉ chỉnh sửa user hiện tại (dựa vào token)")
     @RequestMapping(value = "/update-infor", method = RequestMethod.POST)
     public WrapResponse<Object> updateInfor(@RequestHeader(HttpHeaders.AUTHORIZATION) String tokenHeader, @RequestBody UpdateUserInforRequest request) {
         String token = tokenHeader.replace("Bearer ", "");
@@ -100,7 +100,7 @@ public class UserController {
         return WrapResponse.ok(customUserDetailsService.updateUserInfor(userId, request));
     }
 
-    @ApiOperation(value = "Cập nhật thông tin cá nhân của người dùng", notes = "Truyền id qua path")
+    @ApiOperation(value = "Cập nhật thông tin cá nhân của người dùng trên web admin", notes = "Truyền id qua path")
     @RequestMapping(value = "/update-infor/{userId}", method = RequestMethod.POST)
     public WrapResponse<Object> updateInforWithUserId(@PathVariable String userId, @RequestBody UpdateUserInforRequest request) {
         log.info("update userId {}", userId);
