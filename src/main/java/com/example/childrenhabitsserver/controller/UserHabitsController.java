@@ -39,7 +39,7 @@ public class UserHabitsController {
     }
 
     @RequestMapping(value = "/attendance-habits-content", method = RequestMethod.POST)
-    public WrapResponse<String> attendancePerHabitsContent(@RequestHeader(HttpHeaders.AUTHORIZATION) String tokenHeader, @RequestBody AttendanceUserHabitsContentRequest request) {
+    public WrapResponse<UserHabitsStorage> attendancePerHabitsContent(@RequestHeader(HttpHeaders.AUTHORIZATION) String tokenHeader, @RequestBody AttendanceUserHabitsContentRequest request) {
         String token = tokenHeader.replace("Bearer ", "");
         String userId = jwtTokenProvider.getUserIdFromJWT(token);
         return WrapResponse.ok(userHabitsService.attendancePerHabitsContent(userId, request));

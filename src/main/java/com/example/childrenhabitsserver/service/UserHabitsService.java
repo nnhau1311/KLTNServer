@@ -104,20 +104,73 @@ public class UserHabitsService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public String attendancePerHabitsContent(String userId, AttendanceUserHabitsContentRequest request) {
-        List<UserHabitsStorage> userHabitsStorage = userHabitsRepo.findByUserId(userId);
-        for(UserHabitsStorage itemHabits: userHabitsStorage) {
-            if (itemHabits.getId().equals(request.getUserHabitsId())) {
-                for(UserHabitsContent itemUserHabitsContent: itemHabits.getHabitsContents()) {
-                    updateUserHabitsContent(itemUserHabitsContent, request);
-
+    public UserHabitsStorage attendancePerHabitsContent(String userId, AttendanceUserHabitsContentRequest request) {
+        if (request == null || StringUtils.isBlank(request.getUserHabitsId())) {
+            throw new ServiceException(ErrorCodeService.REQUEST_ATTENDANCE_HABITS_IN_VALID);
+        }
+        UserHabitsStorage userHabitsStorage = getUserHabitsById(request.getUserHabitsId());
+        for (UserHabitsContent itemUserHabitsContent: userHabitsStorage.getHabitsContents()) {
+            Boolean isNeedAttendance = request.getListHabitsContentCode().stream().anyMatch(id -> id.equals(itemUserHabitsContent.getContentCode()));
+            if (isNeedAttendance) {
+                itemUserHabitsContent.setUpdateDate(new Date());
+                Map<String, Boolean> attendanceProcess = itemUserHabitsContent.getAttendanceProcess();
+                String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
+                if (attendanceProcess.containsKey(currentDateStr)) {
+                    attendanceProcess.put(currentDateStr, true);
                 }
-                updateUserHabits(itemHabits);
-                userHabitsRepo.save(itemHabits);
+                else {
+                    log.info("currentDateStr {}", currentDateStr);
+                    log.info("attendanceProcess {}", attendanceProcess.toString());
+                    throw new ServiceException(ErrorCodeService.ATTENDANCE_HABITS_IN_VALID);
+                }
+                itemUserHabitsContent.setAttendanceProcess(attendanceProcess);
+                if (itemUserHabitsContent.getPercentComplete() == 0d) {
+                    itemUserHabitsContent.setStatus(UserHabitsContentStatus.IN_PROGRESS);
+                }
+
+                Boolean contentIsDone = attendanceProcess.values().stream().allMatch(value -> value == true);
+                if (contentIsDone) {
+                    itemUserHabitsContent.setPercentComplete(100d);
+                    itemUserHabitsContent.setStatus(UserHabitsContentStatus.DONE);
+                } else {
+                    Integer countDateHadAttendance = 0;
+                    for(Boolean valueOfNewList: attendanceProcess.values()) {
+                        if (valueOfNewList == true) {
+                            countDateHadAttendance ++;
+                        }
+                    }
+//                    Double percentComplete = 100 * countDateHadAttendance/attendanceProcess.values().size() ;
+                }
             }
         }
-        return "Success";
+        userHabitsStorage.setUpdatedDate(new Date());
+        Map<String, Boolean> attendanceProcess = userHabitsStorage.getAttendanceProcess();
+        String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
+        if (attendanceProcess.containsKey(currentDateStr)) {
+            attendanceProcess.put(currentDateStr, true);
+        } else {
+            throw new ServiceException(ErrorCodeService.ATTENDANCE_HABITS_IN_VALID);
+        }
+        userHabitsStorage.setAttendanceProcess(attendanceProcess);
+        return userHabitsRepo.save(userHabitsStorage);
     }
+
+    // Code cũ
+//    @Transactional(rollbackFor = Exception.class)
+//    public String attendancePerHabitsContent(String userId, AttendanceUserHabitsContentRequest request) {
+//        List<UserHabitsStorage> userHabitsStorage = userHabitsRepo.findByUserId(userId);
+//        for(UserHabitsStorage itemHabits: userHabitsStorage) {
+//            if (itemHabits.getId().equals(request.getUserHabitsId())) {
+//                for(UserHabitsContent itemUserHabitsContent: itemHabits.getHabitsContents()) {
+//                    updateUserHabitsContent(itemUserHabitsContent, request);
+//
+//                }
+//                updateUserHabits(itemHabits);
+//                userHabitsRepo.save(itemHabits);
+//            }
+//        }
+//        return "Success";
+//    }
 
     private void updateUserHabitsContent(UserHabitsContent itemUserHabitsContent, AttendanceUserHabitsContentRequest request) {
         Boolean isNeedAttendance = request.getListHabitsContentCode().stream().anyMatch(id -> id.equals(itemUserHabitsContent.getContentCode()));
