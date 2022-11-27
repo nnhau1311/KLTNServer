@@ -69,7 +69,7 @@ public class UserHabitsService {
             itemContent.setEndDate(endDateContent);
             itemContent.setUpdateDate(new Date());
             Map<String, Boolean> attendanceProcess = new HashMap<>();
-            for (int i = 0; i < itemContent.getNumberDateExecute(); i ++) {
+            for (int i = 0; i <= itemContent.getNumberDateExecute(); i ++) {
                 Date dateCalculator = DateTimeUtils.addDate(startDateContent, i);
                 String currentDateStr = DateTimeUtils.convertDateToString(dateCalculator, DateTimeUtils.DATE_FORMAT_DDMMYYYY);
                 attendanceProcess.put(currentDateStr, false);
@@ -78,7 +78,7 @@ public class UserHabitsService {
         }
         Date endDate = DateTimeUtils.addDate(createUserHabitsRequest.getDateStart(), habitsStorage.getNumberDateExecute());
         Map<String, Boolean> attendanceProcess = new HashMap<>();
-        for (int i = 0; i < habitsStorage.getNumberDateExecute(); i ++) {
+        for (int i = 0; i <= habitsStorage.getNumberDateExecute(); i ++) {
             Date dateCalculator = DateTimeUtils.addDate(createUserHabitsRequest.getDateStart(), i);
             String currentDateStr = DateTimeUtils.convertDateToString(dateCalculator, DateTimeUtils.DATE_FORMAT_DDMMYYYY);
             attendanceProcess.put(currentDateStr, false);
@@ -109,9 +109,14 @@ public class UserHabitsService {
             throw new ServiceException(ErrorCodeService.REQUEST_ATTENDANCE_HABITS_IN_VALID);
         }
         UserHabitsStorage userHabitsStorage = getUserHabitsById(request.getUserHabitsId());
+        Boolean userHabitsContentCodeIsInValid = true;
+
         for (UserHabitsContent itemUserHabitsContent: userHabitsStorage.getHabitsContents()) {
-            Boolean isNeedAttendance = request.getListHabitsContentCode().stream().anyMatch(id -> id.equals(itemUserHabitsContent.getContentCode()));
+            Boolean isNeedAttendance = request.getListHabitsContentCode().stream().anyMatch(code -> code.equals(itemUserHabitsContent.getContentCode()));
+            log.info("isNeedAttendance {}", isNeedAttendance);
+            log.info("code {}", itemUserHabitsContent.getContentCode());
             if (isNeedAttendance) {
+                userHabitsContentCodeIsInValid = false;
                 itemUserHabitsContent.setUpdateDate(new Date());
                 Map<String, Boolean> attendanceProcess = itemUserHabitsContent.getAttendanceProcess();
                 String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
@@ -143,6 +148,9 @@ public class UserHabitsService {
                 }
             }
         }
+        if (userHabitsContentCodeIsInValid) {
+            throw new ServiceException(ErrorCodeService.REQUEST_ATTENDANCE_HABITS_IN_VALID);
+        }
         userHabitsStorage.setUpdatedDate(new Date());
         Map<String, Boolean> attendanceProcess = userHabitsStorage.getAttendanceProcess();
         String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
@@ -152,6 +160,9 @@ public class UserHabitsService {
             throw new ServiceException(ErrorCodeService.ATTENDANCE_HABITS_IN_VALID);
         }
         userHabitsStorage.setAttendanceProcess(attendanceProcess);
+        if (userHabitsStorage.getPercentComplete() == null || userHabitsStorage.getPercentComplete() == 0d) {
+            userHabitsStorage.setStatus(UserHabitsStatus.IN_PROGRESS);
+        }
         return userHabitsRepo.save(userHabitsStorage);
     }
 

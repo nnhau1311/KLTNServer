@@ -32,7 +32,7 @@ public class UserHabitsStorage {
     private String habitsType;
     private String typeOfFinishCourse; // Loại hoàn thành hạn mục này
 //    private String totalLevelComplete; // Mức độ hoàn thành dưới dạng chữ (mức độ)
-//    private Double totalPercentComplete; // Mức độ hoàn thành phần trăm
+    private Double percentComplete = 0d; // Mức độ hoàn thành phần trăm
     private String totalCourse;
     private String executeCourse;
     private Integer status = 0; // Mặc định 0 là chưa hoàn thành
