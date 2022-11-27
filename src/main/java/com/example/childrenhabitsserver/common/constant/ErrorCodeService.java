@@ -7,6 +7,7 @@ public class ErrorCodeService {
     public static final String USER_HAD_EXITS = "USER.USER_HAD_EXITS";
     public static final String USER_HAD_NOT_EXITS = "USER.USER_HAD_NOT_EXITS";
     public static final String USER_ID_NOT_VALID = "USER.USER_ID_NOT_VALID";
+    public static final String USER_IS_ROOT_ADMIN = "USER.USER_IS_ROOT_ADMIN";
 
     public static final String REQUEST_RESET_PASSWORD_INVALID = "COMMON.REQUEST_RESET_PASSWORD_INVALID";
 

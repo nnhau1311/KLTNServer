@@ -267,6 +267,9 @@ public class UserCustomService {
     @Transactional(rollbackFor = Exception.class)
     public UserCustomStorage disableUser(String userId){
         UserCustomStorage userCustomStorage = findById(userId);
+        if (userCustomStorage.getUsername() == "admin") {
+            throw new ServiceException(ErrorCodeService.USER_IS_ROOT_ADMIN);
+        }
         userCustomStorage.setUpdatedDate(new Date());
         userCustomStorage.setStatus(UserStatus.DISABLE);
         return userRepository.save(userCustomStorage);
