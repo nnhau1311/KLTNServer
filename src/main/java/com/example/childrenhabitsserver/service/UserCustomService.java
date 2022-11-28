@@ -86,7 +86,7 @@ public class UserCustomService {
                 .email(createNewUserRequest.getEmail())
                 .role(createNewUserRequest.getRole())
                 .userFullName(createNewUserRequest.getUserFullName())
-                .status(UserStatus.DISABLE)
+                .status(UserStatus.IN_ACTIVE)
                 .expirationJWTDate(new Date())
                 .createdDate(new Date())
                 .updatedDate(new Date())
