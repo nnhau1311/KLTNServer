@@ -91,7 +91,7 @@ public class UserCustomService {
                 .createdDate(new Date())
                 .updatedDate(new Date())
                 .userAddress("Chưa cập nhật")
-                .userAddress("Chưa cập nhật")
+                .userNumberPhone("Chưa cập nhật")
                 .role(UserRole.NORMAL)
                 .build();
         UserCustomStorage userCustomStorageDBNew = userRepository.save(userCustomStorage);

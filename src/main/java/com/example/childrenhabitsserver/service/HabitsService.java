@@ -94,6 +94,10 @@ public class HabitsService {
         return habitsRepo.findAll(pageable);
     }
 
+    public List<HabitsStorage> findAll(){
+        return habitsRepo.findAll();
+    }
+
     public HabitsStorage findById(String habitsId){
         Optional<HabitsStorage> optionalHabitsStorage = habitsRepo.findById(habitsId);
         if (!optionalHabitsStorage.isPresent()) {
