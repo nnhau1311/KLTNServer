@@ -1,6 +1,7 @@
 package com.example.childrenhabitsserver.service;
 
 import com.example.childrenhabitsserver.entity.UserCustomStorage;
+import com.example.childrenhabitsserver.entity.UserHabitsStorage;
 import com.example.childrenhabitsserver.model.NotificationModel;
 import com.example.childrenhabitsserver.utils.DateTimeUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -15,11 +16,13 @@ import java.util.*;
 public class ScheduleService {
     private final RabbitTemplate rabbitTemplate;
     private final UserCustomService userCustomService;
+    private final UserHabitsService userHabitsService;
     private final SendEmailNotificationService sendEmailNotificationService;
 
-    public ScheduleService(RabbitTemplate rabbitTemplate, UserCustomService userCustomService, SendEmailNotificationService sendEmailNotificationService) {
+    public ScheduleService(RabbitTemplate rabbitTemplate, UserCustomService userCustomService, UserHabitsService userHabitsService, SendEmailNotificationService sendEmailNotificationService) {
         this.rabbitTemplate = rabbitTemplate;
         this.userCustomService = userCustomService;
+        this.userHabitsService = userHabitsService;
         this.sendEmailNotificationService = sendEmailNotificationService;
     }
 
@@ -59,5 +62,16 @@ public class ScheduleService {
 
     }
 
+
+    @Scheduled(cron = "0 0 23 * * *")
+//    @Scheduled(cron = "0/1 * * * * *")
+//    @Scheduled(cron = "0 0/1 * * * *")
+    public void remindMissingDateAttendance() {
+        log.info(">>>>>>>>>>>>>>>>> remindUsingApp Schedule <<<<<<<<<<<<<<<<");
+        List<UserHabitsStorage> userHabitsStorageList = userHabitsService.getAllUserHabits();
+        for (UserHabitsStorage userHabitsStorage: userHabitsStorageList) {
+
+        }
+    }
 
 }

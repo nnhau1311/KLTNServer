@@ -139,7 +139,7 @@ public class UserHabitsService {
         Boolean userHabitsContentCodeIsInValid = true;
         Integer countTotalDateHadAttendance = 0;
 
-        int calDate = 2;
+        int calDate = 2; // Dùng để test
         for (UserHabitsContent itemUserHabitsContent: userHabitsStorage.getHabitsContents()) {
             Boolean isNeedAttendance = request.getListHabitsContentCode().stream().anyMatch(code -> code.equals(itemUserHabitsContent.getContentCode()));
             log.info("isNeedAttendance {}", isNeedAttendance);
@@ -148,9 +148,9 @@ public class UserHabitsService {
                 userHabitsContentCodeIsInValid = false;
                 itemUserHabitsContent.setUpdateDate(new Date());
                 Map<String, Boolean> attendanceProcess = itemUserHabitsContent.getAttendanceProcess();
-//                String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
-                        Date testDate = DateTimeUtils.addDate(new Date(), calDate);
-        String currentDateStr = DateTimeUtils.convertDateToString(testDate, DateTimeUtils.DATE_FORMAT_DDMMYYYY);
+                String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
+//                        Date testDate = DateTimeUtils.addDate(new Date(), calDate);
+//        String currentDateStr = DateTimeUtils.convertDateToString(testDate, DateTimeUtils.DATE_FORMAT_DDMMYYYY);
                 if (attendanceProcess.containsKey(currentDateStr) ) { // && attendanceProcess.get(currentDateStr) == false
                     attendanceProcess.put(currentDateStr, true);
                 }
@@ -181,8 +181,8 @@ public class UserHabitsService {
                     itemUserHabitsContent.setPercentComplete(percentComplete);
                 }
 
-//                Date previousDate = DateTimeUtils.addDate(new Date(), -1);
-                Date previousDate = DateTimeUtils.addDate(new Date(), calDate - 1); // test
+                Date previousDate = DateTimeUtils.addDate(new Date(), -1);
+//                Date previousDate = DateTimeUtils.addDate(new Date(), calDate - 1); // test
                 String previousDateStr = DateTimeUtils.convertDateToString(previousDate, DateTimeUtils.DATE_FORMAT_DDMMYYYY);
                 if (attendanceProcess.containsKey(previousDateStr) && attendanceProcess.get(previousDateStr)) {
                     if (itemUserHabitsContent.getNowStreak() == null) {
@@ -202,9 +202,9 @@ public class UserHabitsService {
         }
         userHabitsStorage.setUpdatedDate(new Date());
         Map<String, Boolean> attendanceProcess = userHabitsStorage.getAttendanceProcess();
-//        String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
-        Date testDate = DateTimeUtils.addDate(new Date(), calDate);
-        String currentDateStr = DateTimeUtils.convertDateToString(testDate, DateTimeUtils.DATE_FORMAT_DDMMYYYY);
+        String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
+//        Date testDate = DateTimeUtils.addDate(new Date(), calDate);
+//        String currentDateStr = DateTimeUtils.convertDateToString(testDate, DateTimeUtils.DATE_FORMAT_DDMMYYYY);
         if (attendanceProcess.containsKey(currentDateStr)) {
             attendanceProcess.put(currentDateStr, true);
         } else {
@@ -225,8 +225,8 @@ public class UserHabitsService {
             userHabitsStorage.setPercentComplete(percentComplete);
         }
 
-        //                Date previousDate = DateTimeUtils.addDate(new Date(), -1);
-        Date previousDate = DateTimeUtils.addDate(new Date(), calDate - 1); // test
+                        Date previousDate = DateTimeUtils.addDate(new Date(), -1);
+//        Date previousDate = DateTimeUtils.addDate(new Date(), calDate - 1); // test
         String previousDateStr = DateTimeUtils.convertDateToString(previousDate, DateTimeUtils.DATE_FORMAT_DDMMYYYY);
         if (attendanceProcess.containsKey(previousDateStr) && attendanceProcess.get(previousDateStr)) {
             if (userHabitsStorage.getNowStreak() == null) {
