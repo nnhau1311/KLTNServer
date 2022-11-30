@@ -3,6 +3,8 @@ package com.example.childrenhabitsserver.utils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,6 +30,17 @@ public class DateTimeUtils {
             return StringUtils.EMPTY;
         }
         return new SimpleDateFormat(pattern).format(date);
+    }
+
+    public static Date convertStringToDate(String dateStr, String pattern) {
+        DateFormat df = new SimpleDateFormat(pattern);
+        try {
+            Date startDate = df.parse(dateStr);
+            return startDate;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static long getDifferenceDays(Date d1, Date d2) {

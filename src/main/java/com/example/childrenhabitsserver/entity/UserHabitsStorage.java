@@ -40,7 +40,8 @@ public class UserHabitsStorage {
     private Date endDate;
     private Date createdDate;
     private Date updatedDate;
-
+    private Long longestStreak;
+    private Long nowStreak;
     @ElementCollection
 //    private List<UserHabitsAttendanceProcess> attendanceProcess;
     private Map<String, Boolean> attendanceProcess;

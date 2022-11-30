@@ -36,6 +36,8 @@ public class UserHabitsContent {
     private Date startDate;
     private Date endDate;
     private Date updateDate;
+    private Long longestStreak;
+    private Long nowStreak;
     @ElementCollection
 //    private List<UserHabitsAttendanceProcess> attendanceProcess;
     private Map<String, Boolean> attendanceProcess;

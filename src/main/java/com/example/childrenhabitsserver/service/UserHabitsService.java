@@ -10,8 +10,9 @@ import com.example.childrenhabitsserver.common.request.userhabits.AttendanceUser
 import com.example.childrenhabitsserver.common.request.userhabits.CreateUserHabitsRequest;
 import com.example.childrenhabitsserver.common.request.userhabits.UpdateUserHabitsFullDataRequest;
 import com.example.childrenhabitsserver.entity.HabitsStorage;
+import com.example.childrenhabitsserver.entity.UserCustomStorage;
 import com.example.childrenhabitsserver.entity.UserHabitsStorage;
-import com.example.childrenhabitsserver.model.UserHabitsAttendanceProcess;
+import com.example.childrenhabitsserver.model.NotificationModel;
 import com.example.childrenhabitsserver.model.UserHabitsContent;
 import com.example.childrenhabitsserver.repository.HabitsRepo;
 import com.example.childrenhabitsserver.repository.UserHabitsRepo;
@@ -34,11 +35,15 @@ public class UserHabitsService {
     private final HabitsRepo habitsRepo;
     private final UserHabitsRepo userHabitsRepo;
     private final ServiceUtils serviceUtils;
+    private final SendEmailNotificationService sendEmailNotificationService;
+    private final UserCustomService userCustomService;
 
-    public UserHabitsService(HabitsRepo habitsRepo, UserHabitsRepo userHabitsRepo, ServiceUtils serviceUtils) {
+    public UserHabitsService(HabitsRepo habitsRepo, UserHabitsRepo userHabitsRepo, ServiceUtils serviceUtils, SendEmailNotificationService sendEmailNotificationService, UserCustomService userCustomService) {
         this.habitsRepo = habitsRepo;
         this.userHabitsRepo = userHabitsRepo;
         this.serviceUtils = serviceUtils;
+        this.sendEmailNotificationService = sendEmailNotificationService;
+        this.userCustomService = userCustomService;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -46,6 +51,7 @@ public class UserHabitsService {
         if (StringUtils.isBlank(createUserHabitsRequest.getHabitsId())) {
             throw new ServiceException(ErrorCodeService.ID_HABITS_INVALID);
         }
+        UserCustomStorage userCustomStorage = userCustomService.findById(userId);
         Optional<HabitsStorage> optionalHabitsStorage = habitsRepo.findById(createUserHabitsRequest.getHabitsId());
         if (!optionalHabitsStorage.isPresent()) {
             throw new ServiceException(ErrorCodeService.HABITS_NOT_EXITS);
@@ -56,10 +62,13 @@ public class UserHabitsService {
         for (UserHabitsContent itemContent: userHabitsContent) {
             Integer indexOfContent = userHabitsContent.indexOf(itemContent);
             Date startDateContent = new Date();
+            Date calDateExcuteContent = new Date();
             if (indexOfContent > 0) {
                 startDateContent = DateTimeUtils.addDate(userHabitsContent.get(indexOfContent - 1).getEndDate(), 1);
+                calDateExcuteContent = userHabitsContent.get(indexOfContent - 1).getEndDate();
             } else {
                 startDateContent = createUserHabitsRequest.getDateStart();
+                calDateExcuteContent = createUserHabitsRequest.getDateStart();
             }
             Date endDateContent = DateTimeUtils.addDate(startDateContent, itemContent.getNumberDateExecute());
             String codeForContent = String.format("%s-%s", habitsStorage.getId(), userHabitsContent.indexOf(itemContent));
@@ -68,9 +77,11 @@ public class UserHabitsService {
             itemContent.setStartDate(startDateContent);
             itemContent.setEndDate(endDateContent);
             itemContent.setUpdateDate(new Date());
+            itemContent.setLongestStreak(0l);
+            itemContent.setNowStreak(0l);
             Map<String, Boolean> attendanceProcess = new HashMap<>();
-            for (int i = 0; i <= itemContent.getNumberDateExecute(); i ++) {
-                Date dateCalculator = DateTimeUtils.addDate(startDateContent, i);
+            for (int i = 0; i < itemContent.getNumberDateExecute(); i ++) {
+                Date dateCalculator = DateTimeUtils.addDate(calDateExcuteContent, i);
                 String currentDateStr = DateTimeUtils.convertDateToString(dateCalculator, DateTimeUtils.DATE_FORMAT_DDMMYYYY);
                 attendanceProcess.put(currentDateStr, false);
             }
@@ -78,7 +89,7 @@ public class UserHabitsService {
         }
         Date endDate = DateTimeUtils.addDate(createUserHabitsRequest.getDateStart(), habitsStorage.getNumberDateExecute());
         Map<String, Boolean> attendanceProcess = new HashMap<>();
-        for (int i = 0; i <= habitsStorage.getNumberDateExecute(); i ++) {
+        for (int i = 0; i < habitsStorage.getNumberDateExecute(); i ++) {
             Date dateCalculator = DateTimeUtils.addDate(createUserHabitsRequest.getDateStart(), i);
             String currentDateStr = DateTimeUtils.convertDateToString(dateCalculator, DateTimeUtils.DATE_FORMAT_DDMMYYYY);
             attendanceProcess.put(currentDateStr, false);
@@ -92,15 +103,31 @@ public class UserHabitsService {
                 .typeOfFinishCourse(habitsStorage.getTypeOfFinishCourse())
                 .totalCourse(habitsStorage.getTotalCourse())
                 .executeCourse("0")
+                .percentComplete(0d)
                 .habitsContents(userHabitsContent)
                 .status(UserHabitsStatus.NEW)
                 .startDate(createUserHabitsRequest.getDateStart())
                 .endDate(endDate)
                 .updatedDate(new Date())
                 .createdDate(new Date())
+                .longestStreak(0l)
+                .nowStreak(0l)
                 .attendanceProcess(attendanceProcess)
                 .build();
-        return userHabitsRepo.save(userHabitsStorage);
+        UserHabitsStorage result = userHabitsRepo.save(userHabitsStorage);
+        // Gửi email
+        Map<String, Object> scopes = new HashMap<>();
+        scopes.put("userFullName", userCustomStorage.getUserFullName());
+        scopes.put("userName", userCustomStorage.getUsername());
+        scopes.put("habitsName", result.getHabitsName());
+        NotificationModel notificationModel = NotificationModel.builder()
+                .to(userCustomStorage.getEmail())
+                .template("NotifyCreateNewUserHabits")
+                .scopes(scopes)
+                .subject("Thông báo tạo mới thói quen cho người dùng")
+                .build();
+        sendEmailNotificationService.sendEmail(notificationModel);
+        return result;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -110,7 +137,9 @@ public class UserHabitsService {
         }
         UserHabitsStorage userHabitsStorage = getUserHabitsById(request.getUserHabitsId());
         Boolean userHabitsContentCodeIsInValid = true;
+        Integer countTotalDateHadAttendance = 0;
 
+        int calDate = 2;
         for (UserHabitsContent itemUserHabitsContent: userHabitsStorage.getHabitsContents()) {
             Boolean isNeedAttendance = request.getListHabitsContentCode().stream().anyMatch(code -> code.equals(itemUserHabitsContent.getContentCode()));
             log.info("isNeedAttendance {}", isNeedAttendance);
@@ -119,8 +148,10 @@ public class UserHabitsService {
                 userHabitsContentCodeIsInValid = false;
                 itemUserHabitsContent.setUpdateDate(new Date());
                 Map<String, Boolean> attendanceProcess = itemUserHabitsContent.getAttendanceProcess();
-                String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
-                if (attendanceProcess.containsKey(currentDateStr)) {
+//                String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
+                        Date testDate = DateTimeUtils.addDate(new Date(), calDate);
+        String currentDateStr = DateTimeUtils.convertDateToString(testDate, DateTimeUtils.DATE_FORMAT_DDMMYYYY);
+                if (attendanceProcess.containsKey(currentDateStr) ) { // && attendanceProcess.get(currentDateStr) == false
                     attendanceProcess.put(currentDateStr, true);
                 }
                 else {
@@ -142,9 +173,27 @@ public class UserHabitsService {
                     for(Boolean valueOfNewList: attendanceProcess.values()) {
                         if (valueOfNewList == true) {
                             countDateHadAttendance ++;
+                            countTotalDateHadAttendance ++;
                         }
                     }
-//                    Double percentComplete = 100 * countDateHadAttendance/attendanceProcess.values().size() ;
+                    Integer totalCountDateInContent = attendanceProcess.size();
+                    Double percentComplete = Double.valueOf(100 * countDateHadAttendance/totalCountDateInContent);
+                    itemUserHabitsContent.setPercentComplete(percentComplete);
+                }
+
+//                Date previousDate = DateTimeUtils.addDate(new Date(), -1);
+                Date previousDate = DateTimeUtils.addDate(new Date(), calDate - 1); // test
+                String previousDateStr = DateTimeUtils.convertDateToString(previousDate, DateTimeUtils.DATE_FORMAT_DDMMYYYY);
+                if (attendanceProcess.containsKey(previousDateStr) && attendanceProcess.get(previousDateStr)) {
+                    if (itemUserHabitsContent.getNowStreak() == null) {
+                        itemUserHabitsContent.setNowStreak(0l);
+                    }
+                    itemUserHabitsContent.setNowStreak(itemUserHabitsContent.getNowStreak() + 1);
+                } else {
+                    itemUserHabitsContent.setNowStreak(1l);
+                }
+                if (itemUserHabitsContent.getLongestStreak() == null || itemUserHabitsContent.getLongestStreak() < itemUserHabitsContent.getNowStreak()) {
+                    itemUserHabitsContent.setLongestStreak(itemUserHabitsContent.getNowStreak());
                 }
             }
         }
@@ -153,7 +202,9 @@ public class UserHabitsService {
         }
         userHabitsStorage.setUpdatedDate(new Date());
         Map<String, Boolean> attendanceProcess = userHabitsStorage.getAttendanceProcess();
-        String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
+//        String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
+        Date testDate = DateTimeUtils.addDate(new Date(), calDate);
+        String currentDateStr = DateTimeUtils.convertDateToString(testDate, DateTimeUtils.DATE_FORMAT_DDMMYYYY);
         if (attendanceProcess.containsKey(currentDateStr)) {
             attendanceProcess.put(currentDateStr, true);
         } else {
@@ -163,7 +214,48 @@ public class UserHabitsService {
         if (userHabitsStorage.getPercentComplete() == null || userHabitsStorage.getPercentComplete() == 0d) {
             userHabitsStorage.setStatus(UserHabitsStatus.IN_PROGRESS);
         }
-        return userHabitsRepo.save(userHabitsStorage);
+        Boolean habitsIsDone = userHabitsStorage.getHabitsContents().stream().allMatch(item -> item.getStatus().equals(UserHabitsContentStatus.DONE));
+        Boolean contentIsDone = attendanceProcess.values().stream().allMatch(value -> value == true);
+        if (habitsIsDone) {
+            userHabitsStorage.setPercentComplete(100d);
+            userHabitsStorage.setStatus(UserHabitsStatus.DONE);
+        } else {
+            Integer totalCountDate = attendanceProcess.size();
+            Double percentComplete = Double.valueOf(100 * countTotalDateHadAttendance/totalCountDate);
+            userHabitsStorage.setPercentComplete(percentComplete);
+        }
+
+        //                Date previousDate = DateTimeUtils.addDate(new Date(), -1);
+        Date previousDate = DateTimeUtils.addDate(new Date(), calDate - 1); // test
+        String previousDateStr = DateTimeUtils.convertDateToString(previousDate, DateTimeUtils.DATE_FORMAT_DDMMYYYY);
+        if (attendanceProcess.containsKey(previousDateStr) && attendanceProcess.get(previousDateStr)) {
+            if (userHabitsStorage.getNowStreak() == null) {
+                userHabitsStorage.setNowStreak(0l);
+            }
+            userHabitsStorage.setNowStreak(userHabitsStorage.getNowStreak() + 1);
+        } else {
+            userHabitsStorage.setNowStreak(1l);
+        }
+        if (userHabitsStorage.getLongestStreak() == null || userHabitsStorage.getLongestStreak() < userHabitsStorage.getNowStreak()) {
+            userHabitsStorage.setLongestStreak(userHabitsStorage.getNowStreak());
+        }
+        UserHabitsStorage result = userHabitsRepo.save(userHabitsStorage);
+        UserCustomStorage userCustomStorage = userCustomService.findById(result.getUserId());
+        if (result.getStatus().equals(UserHabitsStatus.DONE)) {
+            // Gửi email
+            Map<String, Object> scopes = new HashMap<>();
+            scopes.put("userFullName", userCustomStorage.getUserFullName());
+            scopes.put("userName", userCustomStorage.getUsername());
+            scopes.put("habitsName", result.getHabitsName());
+            NotificationModel notificationModel = NotificationModel.builder()
+                    .to(userCustomStorage.getEmail())
+                    .template("NotifyCongratulationsUserHabitsIsDone")
+                    .scopes(scopes)
+                    .subject("Thông báo tạo mới thói quen cho người dùng")
+                    .build();
+            sendEmailNotificationService.sendEmail(notificationModel);
+        }
+        return result;
     }
 
     // Code cũ

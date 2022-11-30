@@ -23,8 +23,8 @@ public class ScheduleService {
         this.sendEmailNotificationService = sendEmailNotificationService;
     }
 
-//    @Scheduled(cron = "0 0 8 * * *")
-    @Scheduled(cron = "0/1 * * * * *")
+    @Scheduled(cron = "0 0 0/8 * * *")
+//    @Scheduled(cron = "0/1 * * * * *")
 //    @Scheduled(cron = "0 0/1 * * * *")
     public void remindUsingApp() {
         log.info(">>>>>>>>>>>>>>>>> remindUsingApp Schedule <<<<<<<<<<<<<<<<");
