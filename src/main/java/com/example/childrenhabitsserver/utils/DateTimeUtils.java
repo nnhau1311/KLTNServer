@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class DateTimeUtils {
@@ -27,5 +28,10 @@ public class DateTimeUtils {
             return StringUtils.EMPTY;
         }
         return new SimpleDateFormat(pattern).format(date);
+    }
+
+    public static long getDifferenceDays(Date d1, Date d2) {
+        long diff = d2.getTime() - d1.getTime();
+        return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
     }
 }

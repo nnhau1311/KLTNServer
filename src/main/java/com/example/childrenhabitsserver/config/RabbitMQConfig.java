@@ -84,7 +84,12 @@ public class RabbitMQConfig implements RabbitListenerConfigurer {
     }
 
     @Bean
-    Queue generateContracts() {
+    Queue notifyQueue() {
         return QueueBuilder.durable(RabbitMQQueue.NOTIFY_QUEUE).build();
+    }
+
+    @Bean
+    Queue queueNotifyUserLongTimeDontAccess() {
+        return QueueBuilder.durable(RabbitMQQueue.QUEUE_NOTIFY_USER_LONG_TIME_DONT_ACCESS).build();
     }
 }

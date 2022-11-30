@@ -207,6 +207,9 @@ public class UserCustomService {
         user.setPassword(passBCrypt);
         user.setUpdatedDate(new Date());
 
+
+        UserCustomStorage result = userRepository.save(user);
+
         // Gửi email
         Map<String, Object> scopes = new HashMap<>();
         scopes.put("userFullName", user.getUserFullName());
@@ -219,7 +222,7 @@ public class UserCustomService {
                 .subject("Thông báo reset mật khẩu người dùng")
                 .build();
         sendEmailNotificationService.sendEmail(notificationModel);
-        return userRepository.save(user);
+        return result;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -242,6 +245,8 @@ public class UserCustomService {
             user.setUpdatedDate(new Date());
         }
 
+
+        UserCustomStorage customStorage = userRepository.save(user);
         // Gửi email
         Map<String, Object> scopes = new HashMap<>();
         scopes.put("userFullName", user.getUserFullName());
@@ -253,7 +258,7 @@ public class UserCustomService {
                 .subject("Thông báo thay đổi mật khẩu người dùng")
                 .build();
         sendEmailNotificationService.sendEmail(notificationModel);
-        return userRepository.save(user);
+        return customStorage;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -261,6 +266,7 @@ public class UserCustomService {
         UserCustomStorage userCustomStorage = findById(userId);
         userCustomStorage.setExpirationJWTDate(expirationJWTDate);
         userCustomStorage.setUpdatedDate(new Date());
+        userCustomStorage.setAccessDate(new Date());
         return userRepository.save(userCustomStorage);
     }
 
@@ -297,6 +303,11 @@ public class UserCustomService {
     public Page<UserCustomStorage> findAll(BasePageRequest request) {
         Pageable pageable = PageableUtils.convertPageableAndSort(request.getPageNumber(), 10, new ArrayList<>());
         Page<UserCustomStorage> result = userRepository.findAll(pageable);
+        return result;
+    }
+
+    public List<UserCustomStorage> findAll() {
+        List<UserCustomStorage> result = userRepository.findAll();
         return result;
     }
 

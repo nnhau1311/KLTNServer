@@ -23,7 +23,7 @@ public class UserHabitsContent {
     @Column(name = "user_habits_contentId")
     private String id;
 
-    private String contentCode; //Định danh nội dung
+    private String contentCode;
     private String typeContent; //Định dạng nội dung
     private String body; //Định dạng nội dung
     private String typeOfFinishCourse; // Loại hoàn thành hạn mục này

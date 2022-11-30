@@ -18,4 +18,13 @@ public class QueueHandler {
             e.printStackTrace();
         }
     }
+
+//    @RabbitListener(queues = RabbitMQQueue.QUEUE_NOTIFY_USER_LONG_TIME_DONT_ACCESS)
+//    public void sendEmailNotifyUserLongTimeDontAccess() {
+//        try {
+//            log.info("sendEmailNotifyUserLongTimeDontAccess");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
