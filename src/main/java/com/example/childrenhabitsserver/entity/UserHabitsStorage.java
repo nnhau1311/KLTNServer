@@ -42,7 +42,7 @@ public class UserHabitsStorage {
     private Date updatedDate;
     private Long longestStreak;
     private Long nowStreak;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
 //    private List<UserHabitsAttendanceProcess> attendanceProcess;
     private Map<String, Boolean> attendanceProcess;
 //    @ElementCollection

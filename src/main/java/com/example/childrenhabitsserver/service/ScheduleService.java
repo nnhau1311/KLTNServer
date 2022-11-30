@@ -70,7 +70,23 @@ public class ScheduleService {
         log.info(">>>>>>>>>>>>>>>>> remindUsingApp Schedule <<<<<<<<<<<<<<<<");
         List<UserHabitsStorage> userHabitsStorageList = userHabitsService.getAllUserHabits();
         for (UserHabitsStorage userHabitsStorage: userHabitsStorageList) {
-
+            UserCustomStorage userCustomStorage = userCustomService.findById(userHabitsStorage.getUserId());
+            String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
+            Map<String, Boolean> attendanceProcess = userHabitsStorage.getAttendanceProcess();
+            if (attendanceProcess.containsKey(currentDateStr) && attendanceProcess.get(currentDateStr) == false) {
+                // Gửi email
+                Map<String, Object> scopes = new HashMap<>();
+                scopes.put("userFullName", userCustomStorage.getUserFullName());
+                scopes.put("userName", userCustomStorage.getUsername());
+                scopes.put("habitsName", userHabitsStorage.getHabitsName());
+                NotificationModel notificationModel = NotificationModel.builder()
+                        .to(userCustomStorage.getEmail())
+                        .template("NotifyRemindUserAttendanceToday")
+                        .scopes(scopes)
+                        .subject("Bạn quên mất điểm danh hôm nay rồi! Hãy quay lại giúp trẻ thực hiện thói quen nào!")
+                        .build();
+                sendEmailNotificationService.sendEmail(notificationModel);
+            }
         }
     }
 
