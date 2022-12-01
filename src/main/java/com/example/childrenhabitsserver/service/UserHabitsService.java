@@ -65,12 +65,13 @@ public class UserHabitsService {
             Date calDateExcuteContent = new Date();
             if (indexOfContent > 0) {
                 startDateContent = DateTimeUtils.addDate(userHabitsContent.get(indexOfContent - 1).getEndDate(), 1);
-                calDateExcuteContent = userHabitsContent.get(indexOfContent - 1).getEndDate();
+                calDateExcuteContent = DateTimeUtils.addDate(userHabitsContent.get(indexOfContent - 1).getEndDate(), 1);
+//                calDateExcuteContent = userHabitsContent.get(indexOfContent - 1).getEndDate();
             } else {
                 startDateContent = createUserHabitsRequest.getDateStart();
                 calDateExcuteContent = createUserHabitsRequest.getDateStart();
             }
-            Date endDateContent = DateTimeUtils.addDate(startDateContent, itemContent.getNumberDateExecute());
+            Date endDateContent = DateTimeUtils.addDate(startDateContent, itemContent.getNumberDateExecute() - 1);
             String codeForContent = String.format("%s-%s", habitsStorage.getId(), userHabitsContent.indexOf(itemContent));
             itemContent.setContentCode(codeForContent);
             itemContent.setStatus(UserHabitsContentStatus.NEW);
@@ -87,7 +88,7 @@ public class UserHabitsService {
             }
             itemContent.setAttendanceProcess(attendanceProcess);
         }
-        Date endDate = DateTimeUtils.addDate(createUserHabitsRequest.getDateStart(), habitsStorage.getNumberDateExecute());
+        Date endDate = DateTimeUtils.addDate(createUserHabitsRequest.getDateStart(), habitsStorage.getNumberDateExecute() - 1);
         Map<String, Boolean> attendanceProcess = new HashMap<>();
         for (int i = 0; i < habitsStorage.getNumberDateExecute(); i ++) {
             Date dateCalculator = DateTimeUtils.addDate(createUserHabitsRequest.getDateStart(), i);

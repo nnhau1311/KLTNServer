@@ -1,5 +1,6 @@
 package com.example.childrenhabitsserver.service;
 
+import com.example.childrenhabitsserver.common.constant.UserStatus;
 import com.example.childrenhabitsserver.entity.UserCustomStorage;
 import com.example.childrenhabitsserver.entity.UserHabitsStorage;
 import com.example.childrenhabitsserver.model.NotificationModel;
@@ -37,6 +38,9 @@ public class ScheduleService {
             if (userStorage.getAccessDate() == null || userStorage.getUsername().equals("admin")) {
                 continue;
             }
+            if (userStorage.getStatus() == UserStatus.DISABLE) {
+                continue;
+            }
             Random random = new Random();
             Integer numberRandomDate = random.nextInt();
             numberRandomDate = (numberRandomDate % 9) + 1;
@@ -71,6 +75,9 @@ public class ScheduleService {
         List<UserHabitsStorage> userHabitsStorageList = userHabitsService.getAllUserHabits();
         for (UserHabitsStorage userHabitsStorage: userHabitsStorageList) {
             UserCustomStorage userCustomStorage = userCustomService.findById(userHabitsStorage.getUserId());
+            if (userCustomStorage.getStatus() == UserStatus.DISABLE) {
+                continue;
+            }
             String currentDateStr = DateTimeUtils.convertDateToString(new Date(), DateTimeUtils.DATE_FORMAT_DDMMYYYY);
             Map<String, Boolean> attendanceProcess = userHabitsStorage.getAttendanceProcess();
             if (attendanceProcess.containsKey(currentDateStr) && attendanceProcess.get(currentDateStr) == false) {
