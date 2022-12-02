@@ -85,4 +85,11 @@ public class UserHabitsController {
         return WrapResponse.ok(userHabitsService.getListUserHabits(userId, basePageRequest));
     }
 
+    @ApiOperation(value = "Thống kê thói quen của người dùng bằng id")
+    @RequestMapping(value = "/statistic-habits", method = RequestMethod.GET)
+    public WrapResponse<UserHabitsStorage> statisticUserHabits(@RequestHeader(HttpHeaders.AUTHORIZATION) String tokenHeader) {
+        String token = tokenHeader.replace("Bearer ", "");
+        String userId = jwtTokenProvider.getUserIdFromJWT(token);
+        return WrapResponse.ok(userHabitsService.getUserHabitsById(userId));
+    }
 }

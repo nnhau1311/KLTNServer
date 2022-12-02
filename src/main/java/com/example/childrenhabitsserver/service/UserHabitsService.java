@@ -13,6 +13,7 @@ import com.example.childrenhabitsserver.entity.HabitsStorage;
 import com.example.childrenhabitsserver.entity.UserCustomStorage;
 import com.example.childrenhabitsserver.entity.UserHabitsStorage;
 import com.example.childrenhabitsserver.model.NotificationModel;
+import com.example.childrenhabitsserver.model.StatisticUserHabitsBasicModel;
 import com.example.childrenhabitsserver.model.UserHabitsContent;
 import com.example.childrenhabitsserver.repository.HabitsRepo;
 import com.example.childrenhabitsserver.repository.UserHabitsRepo;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -413,4 +415,37 @@ public class UserHabitsService {
         return result;
     }
 
+    public List<UserHabitsStorage> findAllUserHabitsByUserId(String userId){
+        List<UserHabitsStorage> result = userHabitsRepo.findByUserIdAndStatusNot(userId, UserHabitsStatus.DISABLE);
+        return result;
+    }
+
+    public StatisticUserHabitsBasicModel statisticUserHabits(String userId, Date dateStartFilter, Date dateEndFilter){
+        List<UserHabitsStorage> result = findAllUserHabitsByUserId(userId);
+        Integer numberCreateNewHabits = result.stream().filter(userHabitsStorage ->
+                userHabitsStorage.getCreatedDate().after(dateStartFilter) &&
+                        userHabitsStorage.getCreatedDate().before(dateEndFilter))
+                .collect(Collectors.toList()).size();
+        Integer numberStartExecuteNewHabits = result.stream().filter(userHabitsStorage ->
+                        userHabitsStorage.getStartDate().after(dateStartFilter) &&
+                                userHabitsStorage.getStartDate().before(dateEndFilter))
+                .collect(Collectors.toList()).size();
+        Integer numberDoneHabits = result.stream().filter(userHabitsStorage ->
+                        userHabitsStorage.getStatus() == UserHabitsStatus.DONE
+                        && userHabitsStorage.getUpdatedDate().after(dateStartFilter)
+                                && userHabitsStorage.getUpdatedDate().before(dateEndFilter))
+                .collect(Collectors.toList()).size();
+        Integer numberInProcessHabits = result.stream().filter(userHabitsStorage ->
+                        userHabitsStorage.getStatus() == UserHabitsStatus.IN_PROGRESS
+                                && userHabitsStorage.getUpdatedDate().after(dateStartFilter)
+                                && userHabitsStorage.getUpdatedDate().before(dateEndFilter))
+                .collect(Collectors.toList()).size();
+        StatisticUserHabitsBasicModel response = StatisticUserHabitsBasicModel.builder()
+                .numberDoneHabits(numberDoneHabits)
+                .numberStartExecuteNewHabits(numberStartExecuteNewHabits)
+                .numberCreateNewHabits(numberCreateNewHabits)
+                .numberInProcessHabits(numberInProcessHabits)
+                .build();
+        return response;
+    }
 }
