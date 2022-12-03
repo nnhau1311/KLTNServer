@@ -97,6 +97,8 @@ public class UserHabitsController {
         if (request.getStartDateFilter() == null || request.getEndDateFilter() == null) {
             throw new ServiceException("Yêu cầu thống kê không hợp lệ");
         }
+        log.info("dateStartFilter {}", request.getStartDateFilter());
+        log.info("endStartFilter {}", request.getEndDateFilter());
         return WrapResponse.ok(userHabitsService.statisticUserHabits(userId, request.getStartDateFilter(), request.getEndDateFilter()));
     }
 }
