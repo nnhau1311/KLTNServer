@@ -1,20 +1,24 @@
 package com.example.childrenhabitsserver.controller;
 
 import com.example.childrenhabitsserver.auth.JwtTokenProvider;
+import com.example.childrenhabitsserver.base.exception.ServiceException;
 import com.example.childrenhabitsserver.base.request.BasePageRequest;
 import com.example.childrenhabitsserver.base.response.WrapResponse;
 import com.example.childrenhabitsserver.common.request.userhabits.AttendanceUserHabitsContentRequest;
 import com.example.childrenhabitsserver.common.request.userhabits.CreateUserHabitsRequest;
+import com.example.childrenhabitsserver.common.request.userhabits.StatisticUserHabitsRequest;
 import com.example.childrenhabitsserver.common.request.userhabits.UpdateUserHabitsFullDataRequest;
 import com.example.childrenhabitsserver.entity.HabitsStorage;
 import com.example.childrenhabitsserver.entity.UserHabitsStorage;
 import com.example.childrenhabitsserver.service.UserHabitsService;
+import com.example.childrenhabitsserver.utils.DateTimeUtils;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -85,11 +89,14 @@ public class UserHabitsController {
         return WrapResponse.ok(userHabitsService.getListUserHabits(userId, basePageRequest));
     }
 
-    @ApiOperation(value = "Thống kê thói quen của người dùng bằng id")
-    @RequestMapping(value = "/statistic-habits", method = RequestMethod.GET)
-    public WrapResponse<UserHabitsStorage> statisticUserHabits(@RequestHeader(HttpHeaders.AUTHORIZATION) String tokenHeader) {
+    @ApiOperation(value = "Thống kê thói quen của người dùng bằng id", notes = "Truyền timeStatistic là MONTH hoặc WEEK")
+    @RequestMapping(value = "/statistic-habits/{timeStatistic}", method = RequestMethod.GET)
+    public WrapResponse<Object> statisticUserHabits(@RequestHeader(HttpHeaders.AUTHORIZATION) String tokenHeader, @RequestBody StatisticUserHabitsRequest request) {
         String token = tokenHeader.replace("Bearer ", "");
         String userId = jwtTokenProvider.getUserIdFromJWT(token);
-        return WrapResponse.ok(userHabitsService.getUserHabitsById(userId));
+        if (request.getStartDateFilter() == null || request.getEndDateFilter() == null) {
+            throw new ServiceException("Yêu cầu thống kê không hợp lệ");
+        }
+        return WrapResponse.ok(userHabitsService.statisticUserHabits(userId, request.getStartDateFilter(), request.getEndDateFilter()));
     }
 }

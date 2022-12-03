@@ -396,7 +396,15 @@ public class UserHabitsService {
 
     // QUERY ===================================================================
     public List<UserHabitsStorage> getAllUserHabits(){
-        return userHabitsRepo.findAll();
+        List<UserHabitsStorage> result = userHabitsRepo.findAll();
+//        for (UserHabitsStorage userHabitsStorage: result) {
+//            if (userHabitsStorage == null) {
+//                userHabitsStorage.setCreatedDate(new Date());
+//                userHabitsRepo.save(userHabitsStorage);
+//            }
+//        }
+
+        return result;
     }
 
     public UserHabitsStorage getUserHabitsById(String userHabitsStoreId){
