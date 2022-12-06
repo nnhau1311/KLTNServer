@@ -27,6 +27,10 @@ public class UserHabitsStorage {
     private String id;
 
     private String userId;
+
+    @ManyToOne
+    @JoinColumn(name = "user_custom_storage_user_id")
+    private UserCustomStorage userCustomStorage;
     private String habitsId;
     private String habitsName;
     private String habitsType;
@@ -42,6 +46,11 @@ public class UserHabitsStorage {
     private Date updatedDate;
     private Long longestStreak;
     private Long nowStreak;
+
+    @ManyToOne
+    @JoinColumn(name = "habits_system_storage_habits_id")
+    private HabitsStorage habitsSystemStorage;
+
     @ElementCollection(fetch = FetchType.EAGER)
 //    private List<UserHabitsAttendanceProcess> attendanceProcess;
     private Map<String, Boolean> attendanceProcess;

@@ -13,13 +13,13 @@ import javax.persistence.Id;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity
+//@Entity
 public class TestJPA {
-    @Id
-    @GeneratedValue(generator="system-uuid")
-    @GenericGenerator(name="system-uuid", strategy = "uuid")
-    @Column(name = "id", nullable = false)
-    private String id;
+//    @Id
+//    @GeneratedValue(generator="system-uuid")
+//    @GenericGenerator(name="system-uuid", strategy = "uuid")
+//    @Column(name = "id", nullable = false)
+//    private String id;
 
     public String testData;
     public String testValue;
